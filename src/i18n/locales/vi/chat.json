@@ -1,0 +1,240 @@
+{
+  "codeBlock": {
+    "copy": "Sao chép",
+    "copied": "Đã sao chép",
+    "copyCode": "Sao chép mã"
+  },
+  "copyMessage": {
+    "copy": "Sao chép tin nhắn",
+    "copied": "Đã sao chép tin nhắn",
+    "selectFormat": "Chọn định dạng sao chép",
+    "copyAsMarkdown": "Sao chép dạng markdown",
+    "copyAsText": "Sao chép dạng văn bản"
+  },
+  "messageTypes": {
+    "user": "U",
+    "error": "Lỗi",
+    "tool": "Công cụ",
+    "claude": "Claude",
+    "cursor": "Cursor",
+    "codex": "Codex",
+    "opencode": "OpenCode"
+  },
+  "tools": {
+    "settings": "Cài đặt công cụ",
+    "error": "Lỗi công cụ",
+    "result": "Kết quả công cụ",
+    "viewParams": "Xem tham số đầu vào",
+    "viewRawParams": "Xem tham số thô",
+    "viewDiff": "Xem diff chỉnh sửa của",
+    "creatingFile": "Đang tạo tệp mới:",
+    "updatingTodo": "Đang cập nhật danh sách việc cần làm",
+    "read": "Đọc",
+    "readFile": "Đọc tệp",
+    "updateTodo": "Cập nhật danh sách việc cần làm",
+    "readTodo": "Đọc danh sách việc cần làm",
+    "searchResults": "kết quả"
+  },
+  "search": {
+    "found": "Tìm thấy {{count}} {{type}}",
+    "file": "tệp",
+    "files": "tệp",
+    "pattern": "mẫu:",
+    "in": "trong:"
+  },
+  "fileOperations": {
+    "updated": "Đã cập nhật tệp thành công",
+    "created": "Đã tạo tệp thành công",
+    "written": "Đã ghi tệp thành công",
+    "diff": "Diff",
+    "newFile": "Tệp mới",
+    "viewContent": "Xem nội dung tệp",
+    "viewFullOutput": "Xem toàn bộ đầu ra ({{count}} ký tự)",
+    "contentDisplayed": "Nội dung tệp được hiển thị trong khung diff phía trên"
+  },
+  "interactive": {
+    "title": "Yêu cầu tương tác",
+    "waiting": "Đang chờ phản hồi của bạn trong CLI",
+    "instruction": "Vui lòng chọn một tùy chọn trong terminal nơi Claude đang chạy.",
+    "selectedOption": "✓ Claude đã chọn tùy chọn {{number}}",
+    "instructionDetail": "Trong CLI, bạn sẽ chọn tùy chọn này bằng phím mũi tên hoặc gõ số tương ứng."
+  },
+  "thinking": {
+    "title": "Đang suy nghĩ...",
+    "emoji": "💭 Đang suy nghĩ..."
+  },
+  "json": {
+    "response": "Phản hồi JSON"
+  },
+  "permissions": {
+    "grant": "Cấp quyền cho {{tool}}",
+    "added": "Đã thêm quyền",
+    "addTo": "Thêm {{entry}} vào danh sách công cụ được phép.",
+    "retry": "Đã lưu quyền. Hãy thử lại yêu cầu để dùng công cụ.",
+    "error": "Không thể cập nhật quyền. Vui lòng thử lại.",
+    "openSettings": "Mở cài đặt"
+  },
+  "todo": {
+    "updated": "Danh sách việc cần làm đã được cập nhật thành công",
+    "current": "Danh sách việc cần làm hiện tại"
+  },
+  "plan": {
+    "viewPlan": "📋 Xem kế hoạch triển khai",
+    "title": "Kế hoạch triển khai"
+  },
+  "usageLimit": {
+    "resetAt": "Đã đạt giới hạn sử dụng Claude. Hạn mức của bạn sẽ được đặt lại lúc **{{time}} {{timezone}}** - {{date}}"
+  },
+  "codex": {
+    "permissionMode": "Chế độ quyền",
+    "modes": {
+      "default": "Chế độ mặc định",
+      "auto": "Chế độ tự động",
+      "acceptEdits": "Chấp nhận chỉnh sửa",
+      "bypassPermissions": "Bỏ qua quyền",
+      "plan": "Chế độ lập kế hoạch"
+    },
+    "descriptions": {
+      "default": "Chỉ các lệnh tin cậy (ls, cat, grep, git status, v.v.) chạy tự động. Các lệnh khác bị bỏ qua. Có thể ghi vào workspace.",
+      "auto": "Bộ phân loại của mô hình quyết định phê duyệt hay từ chối cho từng lần gọi công cụ. Tự động hoàn toàn, nhưng an toàn hơn Bỏ qua quyền — vẫn có thể bị từ chối.",
+      "acceptEdits": "Mọi lệnh chạy tự động trong phạm vi workspace. Chế độ tự động hoàn toàn với thực thi trong sandbox.",
+      "bypassPermissions": "Toàn quyền truy cập hệ thống, không giới hạn. Mọi lệnh chạy tự động với đầy đủ quyền truy cập ổ đĩa và mạng. Hãy thận trọng.",
+      "plan": "Chế độ lập kế hoạch - không lệnh nào được thực thi"
+    },
+    "technicalDetails": "Chi tiết kỹ thuật"
+  },
+  "voice": {
+    "input": "Nhập bằng giọng nói",
+    "stopRecording": "Dừng ghi âm",
+    "transcribing": "Đang chuyển thành văn bản…",
+    "speak": "Đọc to",
+    "stopSpeaking": "Dừng",
+    "loading": "Đang tải…"
+  },
+  "input": {
+    "placeholder": "Gõ / cho lệnh, @ cho tệp, hoặc hỏi {{provider}} bất cứ điều gì...",
+    "placeholderDefault": "Nhập tin nhắn của bạn...",
+    "disabled": "Ô nhập đã bị tắt",
+    "attachFiles": "Đính kèm tệp",
+    "attachImages": "Đính kèm ảnh",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "hintText": {
+      "ctrlEnter": "Ctrl+Enter để gửi • Shift+Enter để xuống dòng • Tab để đổi chế độ • / cho lệnh slash",
+      "enter": "Enter để gửi • Shift+Enter để xuống dòng • Tab để đổi chế độ • / cho lệnh slash",
+      "queue": "Enter để xếp hàng tin nhắn tiếp theo",
+      "updateQueued": "Enter để cập nhật tin nhắn đang chờ"
+    },
+    "clickToChangeMode": "Nhấp để đổi chế độ quyền (hoặc nhấn Tab trong ô nhập)",
+    "showAllCommands": "Hiện tất cả lệnh",
+    "clearInput": "Xóa nội dung nhập",
+    "scrollToBottom": "Cuộn xuống cuối",
+    "queue": {
+      "sendNext": "Xếp hàng tin nhắn tiếp theo",
+      "update": "Cập nhật tin nhắn đang chờ",
+      "label": "Đang chờ gửi",
+      "willSend": "Sẽ gửi khi lượt này kết thúc",
+      "edit": "Sửa tin nhắn đang chờ",
+      "delete": "Xóa tin nhắn đang chờ"
+    }
+  },
+  "providerSelection": {
+    "title": "Chọn trợ lý AI của bạn",
+    "description": "Chọn một nhà cung cấp để bắt đầu hội thoại mới",
+    "selectModel": "Chọn mô hình",
+    "providerInfo": {
+      "anthropic": "bởi Anthropic",
+      "openai": "bởi OpenAI",
+      "cursorEditor": "Trình soạn mã AI",
+      "google": "bởi Google"
+    },
+    "readyPrompt": {
+      "claude": "Sẵn sàng dùng Claude với {{model}}. Hãy nhập tin nhắn của bạn bên dưới.",
+      "cursor": "Sẵn sàng dùng Cursor với {{model}}. Hãy nhập tin nhắn của bạn bên dưới.",
+      "codex": "Sẵn sàng dùng Codex với {{model}}. Hãy nhập tin nhắn của bạn bên dưới.",
+      "opencode": "Sẵn sàng dùng OpenCode với {{model}}. Hãy nhập tin nhắn của bạn bên dưới.",
+      "default": "Chọn một nhà cung cấp phía trên để bắt đầu"
+    },
+    "pressToSearch": "Nhấn <kbd>{{shortcut}}</kbd> để tìm phiên, tệp và commit"
+  },
+  "session": {
+    "continue": {
+      "title": "Tiếp tục cuộc hội thoại của bạn",
+      "description": "Đặt câu hỏi về mã của bạn, yêu cầu thay đổi, hoặc nhờ hỗ trợ các tác vụ phát triển"
+    },
+    "loading": {
+      "olderMessages": "Đang tải tin nhắn cũ hơn...",
+      "sessionMessages": "Đang tải tin nhắn của phiên..."
+    },
+    "messages": {
+      "showingOf": "Hiển thị {{shown}} / {{total}} tin nhắn",
+      "scrollToLoad": "Cuộn lên để tải thêm",
+      "showingLast": "Hiển thị {{count}} tin nhắn cuối (tổng {{total}})",
+      "loadEarlier": "Tải tin nhắn cũ hơn",
+      "loadAll": "Tải tất cả tin nhắn",
+      "loadingAll": "Đang tải tất cả tin nhắn...",
+      "allLoaded": "Đã tải tất cả tin nhắn",
+      "perfWarning": "Đã tải tất cả tin nhắn — cuộn có thể chậm hơn. Nhấp \"Cuộn xuống cuối\" để khôi phục hiệu năng."
+    }
+  },
+  "shell": {
+    "selectProject": {
+      "title": "Chọn một dự án",
+      "description": "Chọn một dự án để mở shell tương tác trong thư mục đó"
+    },
+    "status": {
+      "newSession": "Phiên mới",
+      "initializing": "Đang khởi tạo...",
+      "restarting": "Đang khởi động lại..."
+    },
+    "actions": {
+      "disconnect": "Ngắt kết nối",
+      "disconnectTitle": "Ngắt kết nối khỏi shell",
+      "restart": "Khởi động lại",
+      "restartTitle": "Khởi động lại shell",
+      "connect": "Tiếp tục trong shell",
+      "connectTitle": "Kết nối tới shell"
+    },
+    "loading": "Đang tải terminal...",
+    "connecting": "Đang kết nối tới shell...",
+    "startSession": "Bắt đầu một phiên Claude mới",
+    "resumeSession": "Tiếp tục phiên: {{displayName}}...",
+    "runCommand": "Chạy {{command}} trong {{projectName}}",
+    "startCli": "Đang khởi động Claude CLI trong {{projectName}}",
+    "defaultCommand": "lệnh"
+  },
+  "claudeStatus": {
+    "actions": {
+      "thinking": "Đang suy nghĩ",
+      "processing": "Đang xử lý",
+      "analyzing": "Đang phân tích",
+      "working": "Đang làm việc",
+      "computing": "Đang tính toán",
+      "reasoning": "Đang suy luận"
+    },
+    "state": {
+      "live": "Trực tiếp",
+      "paused": "Tạm dừng"
+    },
+    "elapsed": {
+      "seconds": "{{count}}s",
+      "minutesSeconds": "{{minutes}}m {{seconds}}s",
+      "label": "Đã chạy {{time}}",
+      "startingNow": "Đang bắt đầu"
+    },
+    "stop": "Dừng",
+    "controls": {
+      "stopGeneration": "Dừng sinh nội dung",
+      "pressEscToStop": "Nhấn Esc bất cứ lúc nào để dừng"
+    },
+    "providers": {
+      "assistant": "Trợ lý"
+    }
+  },
+  "projectSelection": {
+    "startChatWithProvider": "Chọn một dự án để bắt đầu trò chuyện với {{provider}}"
+  },
+  "tasks": {
+    "nextTaskPrompt": "Bắt đầu nhiệm vụ tiếp theo"
+  }
+}

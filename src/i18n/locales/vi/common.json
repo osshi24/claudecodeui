@@ -1,0 +1,269 @@
+{
+  "buttons": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "create": "Tạo",
+    "edit": "Sửa",
+    "close": "Đóng",
+    "confirm": "Xác nhận",
+    "submit": "Gửi",
+    "retry": "Thử lại",
+    "refresh": "Làm mới",
+    "search": "Tìm kiếm",
+    "clear": "Xóa",
+    "copy": "Sao chép",
+    "download": "Tải xuống",
+    "upload": "Tải lên",
+    "browse": "Duyệt"
+  },
+  "tabs": {
+    "chat": "Trò chuyện",
+    "shell": "Shell",
+    "files": "Tệp",
+    "git": "Quản lý mã nguồn",
+    "tasks": "Nhiệm vụ",
+    "browser": "Trình duyệt",
+    "computer": "Máy tính"
+  },
+  "status": {
+    "loading": "Đang tải...",
+    "success": "Thành công",
+    "error": "Lỗi",
+    "failed": "Thất bại",
+    "pending": "Đang chờ",
+    "completed": "Hoàn thành",
+    "inProgress": "Đang thực hiện"
+  },
+  "messages": {
+    "savedSuccessfully": "Đã lưu thành công",
+    "deletedSuccessfully": "Đã xóa thành công",
+    "updatedSuccessfully": "Đã cập nhật thành công",
+    "operationFailed": "Thao tác thất bại",
+    "networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.",
+    "unauthorized": "Chưa được xác thực. Vui lòng đăng nhập.",
+    "notFound": "Không tìm thấy",
+    "invalidInput": "Dữ liệu nhập không hợp lệ",
+    "requiredField": "Trường này là bắt buộc",
+    "unknownError": "Đã xảy ra lỗi không xác định"
+  },
+  "navigation": {
+    "settings": "Cài đặt",
+    "home": "Trang chủ",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước",
+    "logout": "Đăng xuất"
+  },
+  "common": {
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "darkMode": "Chế độ tối",
+    "lightMode": "Chế độ sáng",
+    "name": "Tên",
+    "description": "Mô tả",
+    "enabled": "Đã bật",
+    "disabled": "Đã tắt",
+    "optional": "Tùy chọn",
+    "version": "Phiên bản",
+    "select": "Chọn",
+    "selectAll": "Chọn tất cả",
+    "deselectAll": "Bỏ chọn tất cả"
+  },
+  "time": {
+    "justNow": "Vừa xong",
+    "minutesAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước",
+    "yesterday": "Hôm qua"
+  },
+  "fileOperations": {
+    "newFile": "Tệp mới",
+    "newFolder": "Thư mục mới",
+    "rename": "Đổi tên",
+    "move": "Di chuyển",
+    "copyPath": "Sao chép đường dẫn",
+    "openInEditor": "Mở trong trình soạn thảo"
+  },
+  "mainContent": {
+    "loading": "Đang tải CloudCLI",
+    "settingUpWorkspace": "Đang thiết lập không gian làm việc của bạn...",
+    "chooseProject": "Chọn dự án của bạn",
+    "selectProjectDescription": "Chọn một dự án từ thanh bên để bắt đầu lập trình cùng Claude. Mỗi dự án chứa các phiên trò chuyện và lịch sử tệp của bạn.",
+    "tip": "Mẹo",
+    "createProjectMobile": "Nhấn nút menu phía trên để truy cập các dự án",
+    "createProjectDesktop": "Tạo dự án mới bằng cách nhấp vào biểu tượng thư mục ở thanh bên",
+    "newSession": "Phiên mới",
+    "untitledSession": "Phiên chưa đặt tên",
+    "projectFiles": "Tệp dự án"
+  },
+  "fileTree": {
+    "loading": "Đang tải tệp...",
+    "files": "Tệp",
+    "simpleView": "Chế độ xem đơn giản",
+    "compactView": "Chế độ xem gọn",
+    "detailedView": "Chế độ xem chi tiết",
+    "searchPlaceholder": "Tìm kiếm tệp và thư mục...",
+    "clearSearch": "Xóa tìm kiếm",
+    "name": "Tên",
+    "size": "Kích thước",
+    "modified": "Sửa đổi",
+    "permissions": "Quyền",
+    "noFilesFound": "Không tìm thấy tệp nào",
+    "checkProjectPath": "Kiểm tra xem đường dẫn dự án có truy cập được không",
+    "noMatchesFound": "Không tìm thấy kết quả phù hợp",
+    "tryDifferentSearch": "Thử từ khóa khác hoặc xóa tìm kiếm",
+    "justNow": "vừa xong",
+    "minAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước",
+    "newFile": "Tệp mới (Cmd+N)",
+    "newFolder": "Thư mục mới (Cmd+Shift+N)",
+    "refresh": "Làm mới",
+    "collapseAll": "Thu gọn tất cả",
+    "context": {
+      "rename": "Đổi tên",
+      "delete": "Xóa",
+      "copyPath": "Sao chép đường dẫn",
+      "download": "Tải xuống",
+      "newFile": "Tệp mới",
+      "newFolder": "Thư mục mới",
+      "refresh": "Làm mới",
+      "menuLabel": "Menu ngữ cảnh tệp",
+      "loading": "Đang tải..."
+    }
+  },
+  "projectWizard": {
+    "title": "Tạo dự án mới",
+    "steps": {
+      "type": "Loại",
+      "configure": "Cấu hình",
+      "confirm": "Xác nhận"
+    },
+    "step1": {
+      "question": "Bạn đã có sẵn workspace hay muốn tạo một workspace mới?",
+      "existing": {
+        "title": "Workspace có sẵn",
+        "description": "Tôi đã có workspace trên máy chủ và chỉ cần thêm nó vào danh sách dự án"
+      },
+      "new": {
+        "title": "Workspace mới",
+        "description": "Tạo workspace mới, có thể clone từ một kho GitHub"
+      }
+    },
+    "step2": {
+      "existingPath": "Đường dẫn workspace",
+      "newPath": "Đường dẫn workspace",
+      "existingPlaceholder": "/duong-dan/toi/workspace/co-san",
+      "newPlaceholder": "/duong-dan/toi/workspace/moi",
+      "existingHelp": "Đường dẫn đầy đủ tới thư mục workspace hiện có của bạn",
+      "newHelp": "Đường dẫn đầy đủ tới thư mục workspace của bạn",
+      "githubUrl": "URL GitHub (tùy chọn)",
+      "githubPlaceholder": "https://github.com/username/repository",
+      "githubHelp": "Tùy chọn: cung cấp URL GitHub để clone một kho mã",
+      "githubAuth": "Xác thực GitHub (tùy chọn)",
+      "githubAuthHelp": "Chỉ cần thiết cho kho riêng tư. Kho công khai có thể clone mà không cần xác thực.",
+      "loadingTokens": "Đang tải các token đã lưu...",
+      "storedToken": "Token đã lưu",
+      "newToken": "Token mới",
+      "nonePublic": "Không (công khai)",
+      "selectToken": "Chọn token",
+      "selectTokenPlaceholder": "-- Chọn một token --",
+      "tokenPlaceholder": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "tokenHelp": "Token này chỉ được dùng cho thao tác này",
+      "publicRepoInfo": "Kho công khai không cần xác thực. Bạn có thể bỏ qua token nếu clone kho công khai.",
+      "noTokensHelp": "Chưa có token nào được lưu. Bạn có thể thêm token trong Cài đặt → API Keys để tái sử dụng dễ hơn.",
+      "optionalTokenPublic": "GitHub Token (tùy chọn với kho công khai)",
+      "tokenPublicPlaceholder": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (để trống với kho công khai)"
+    },
+    "step3": {
+      "reviewConfig": "Xem lại cấu hình của bạn",
+      "existingWorkspace": "Workspace có sẵn",
+      "newWorkspace": "Workspace mới",
+      "path": "Đường dẫn:",
+      "cloneFrom": "Clone từ:",
+      "authentication": "Xác thực:",
+      "usingStoredToken": "Dùng token đã lưu:",
+      "usingProvidedToken": "Dùng token vừa nhập",
+      "noAuthentication": "Không xác thực",
+      "sshKey": "Khóa SSH",
+      "existingInfo": "Workspace sẽ được thêm vào danh sách dự án và sẵn sàng cho các phiên Claude/Cursor.",
+      "newWithClone": "Kho mã sẽ được clone từ thư mục này.",
+      "newEmpty": "Workspace sẽ được thêm vào danh sách dự án và sẵn sàng cho các phiên Claude/Cursor.",
+      "cloningRepository": "Đang clone kho mã..."
+    },
+    "buttons": {
+      "cancel": "Hủy",
+      "back": "Quay lại",
+      "next": "Tiếp theo",
+      "createProject": "Tạo dự án",
+      "creating": "Đang tạo...",
+      "cloning": "Đang clone..."
+    },
+    "errors": {
+      "selectType": "Vui lòng chọn bạn đã có workspace hay muốn tạo mới",
+      "providePath": "Vui lòng nhập đường dẫn workspace",
+      "failedToCreate": "Tạo workspace thất bại",
+      "failedToCreateFolder": "Tạo thư mục thất bại"
+    }
+  },
+  "notifications": {
+    "genericTool": "một công cụ",
+    "codes": {
+      "generic": {
+        "info": {
+          "title": "Thông báo"
+        }
+      },
+      "permission": {
+        "required": {
+          "title": "Cần hành động",
+          "body": "{{toolName}} đang chờ quyết định của bạn."
+        }
+      },
+      "run": {
+        "stopped": {
+          "title": "Lượt chạy đã dừng",
+          "body": "Lý do: {{reason}}"
+        },
+        "failed": {
+          "title": "Lượt chạy thất bại"
+        }
+      },
+      "agent": {
+        "notification": {
+          "title": "Thông báo từ agent"
+        }
+      }
+    }
+  },
+  "versionUpdate": {
+    "title": "Có bản cập nhật",
+    "newVersionReady": "Phiên bản mới đã sẵn sàng",
+    "currentVersion": "Phiên bản hiện tại",
+    "latestVersion": "Phiên bản mới nhất",
+    "whatsNew": "Có gì mới:",
+    "viewFullRelease": "Xem toàn bộ bản phát hành",
+    "updateProgress": "Tiến trình cập nhật:",
+    "manualUpgrade": "Nâng cấp thủ công:",
+    "npmUpgradeCommand": "npm install -g @cloudcli-ai/cloudcli@latest",
+    "manualUpgradeHint": "Hoặc nhấp \"Cập nhật ngay\" để chạy cập nhật tự động.",
+    "updateCompleted": "Cập nhật thành công!",
+    "restartServer": "Vui lòng khởi động lại máy chủ để áp dụng thay đổi.",
+    "updateFailed": "Cập nhật thất bại",
+    "buttons": {
+      "close": "Đóng",
+      "later": "Để sau",
+      "copyCommand": "Sao chép lệnh",
+      "updateNow": "Cập nhật ngay",
+      "updating": "Đang cập nhật..."
+    },
+    "ariaLabels": {
+      "closeModal": "Đóng hộp thoại nâng cấp phiên bản",
+      "showSidebar": "Hiện thanh bên",
+      "settings": "Cài đặt",
+      "updateAvailable": "Có bản cập nhật",
+      "closeSidebar": "Đóng thanh bên"
+    }
+  }
+}

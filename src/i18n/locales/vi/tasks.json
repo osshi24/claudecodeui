@@ -1,0 +1,142 @@
+{
+  "notConfigured": {
+    "title": "TaskMaster AI chưa được cấu hình",
+    "description": "TaskMaster giúp chia nhỏ các dự án phức tạp thành những nhiệm vụ dễ quản lý với sự hỗ trợ của AI",
+    "whatIsTitle": "🎯 TaskMaster là gì?",
+    "features": {
+      "aiPowered": "Quản lý nhiệm vụ bằng AI: Chia dự án phức tạp thành các nhiệm vụ con dễ quản lý",
+      "prdTemplates": "Mẫu PRD: Sinh nhiệm vụ từ tài liệu yêu cầu sản phẩm (PRD)",
+      "dependencyTracking": "Theo dõi phụ thuộc: Nắm rõ quan hệ giữa các nhiệm vụ và thứ tự thực hiện",
+      "progressVisualization": "Trực quan hóa tiến độ: Bảng Kanban và phân tích nhiệm vụ chi tiết",
+      "cliIntegration": "Tích hợp CLI: Dùng các lệnh taskmaster cho quy trình nâng cao"
+    },
+    "initializeButton": "Khởi tạo TaskMaster AI"
+  },
+  "gettingStarted": {
+    "title": "Bắt đầu với TaskMaster",
+    "subtitle": "TaskMaster đã được khởi tạo! Tiếp theo hãy làm như sau:",
+    "steps": {
+      "createPRD": {
+        "title": "Tạo tài liệu yêu cầu sản phẩm (PRD)",
+        "description": "Thảo luận ý tưởng dự án và tạo một PRD mô tả những gì bạn muốn xây dựng.",
+        "addButton": "Thêm PRD",
+        "existingPRDs": "PRD hiện có:"
+      },
+      "generateTasks": {
+        "title": "Sinh nhiệm vụ từ PRD",
+        "description": "Khi đã có PRD, hãy yêu cầu trợ lý AI phân tích nó và TaskMaster sẽ tự động chia thành các nhiệm vụ dễ quản lý kèm chi tiết triển khai."
+      },
+      "analyzeTasks": {
+        "title": "Phân tích & mở rộng nhiệm vụ",
+        "description": "Yêu cầu trợ lý AI phân tích độ phức tạp của nhiệm vụ và mở rộng thành các nhiệm vụ con chi tiết để dễ triển khai hơn."
+      },
+      "startBuilding": {
+        "title": "Bắt đầu xây dựng",
+        "description": "Yêu cầu trợ lý AI bắt tay vào các nhiệm vụ, cập nhật trạng thái và thêm nhiệm vụ mới khi dự án phát triển."
+      }
+    },
+    "tip": "💡 Mẹo: Hãy bắt đầu với một PRD để tận dụng tối đa khả năng sinh nhiệm vụ bằng AI của TaskMaster"
+  },
+  "setupModal": {
+    "title": "Thiết lập TaskMaster",
+    "subtitle": "CLI tương tác cho {{projectName}}",
+    "willStart": "Quá trình khởi tạo TaskMaster sẽ tự động bắt đầu",
+    "completed": "Thiết lập TaskMaster hoàn tất! Bạn có thể đóng cửa sổ này.",
+    "closeButton": "Đóng",
+    "closeContinueButton": "Đóng & tiếp tục"
+  },
+  "helpGuide": {
+    "title": "Bắt đầu với TaskMaster",
+    "subtitle": "Cẩm nang quản lý nhiệm vụ hiệu quả của bạn",
+    "examples": {
+      "parsePRD": "💬 Ví dụ:\n\"Tôi vừa khởi tạo dự án mới với Claude Task Master. Tôi có một PRD tại .taskmaster/docs/prd.txt. Bạn có thể giúp tôi phân tích nó và thiết lập các nhiệm vụ ban đầu không?\"",
+      "expandTask": "💬 Ví dụ:\n\"Nhiệm vụ 5 có vẻ phức tạp. Bạn có thể chia nhỏ nó thành các nhiệm vụ con không?\"",
+      "addTask": "💬 Ví dụ:\n\"Hãy thêm một nhiệm vụ mới để triển khai tính năng tải ảnh đại diện người dùng bằng Cloudinary, nghiên cứu cách tiếp cận tốt nhất.\""
+    },
+    "moreExamples": "Xem thêm ví dụ và cách sử dụng →",
+    "proTips": {
+      "title": "💡 Mẹo hay",
+      "search": "Dùng thanh tìm kiếm để nhanh chóng tìm nhiệm vụ cụ thể",
+      "views": "Chuyển giữa các chế độ xem Kanban, Danh sách và Lưới bằng nút chuyển chế độ",
+      "filters": "Dùng bộ lọc để tập trung vào trạng thái hoặc độ ưu tiên cụ thể",
+      "details": "Nhấp vào bất kỳ nhiệm vụ nào để xem thông tin chi tiết và quản lý nhiệm vụ con"
+    },
+    "learnMore": {
+      "title": "📚 Tìm hiểu thêm",
+      "description": "TaskMaster AI là hệ thống quản lý nhiệm vụ nâng cao dành cho lập trình viên. Xem tài liệu, ví dụ và đóng góp cho dự án.",
+      "githubButton": "Xem trên GitHub"
+    }
+  },
+  "search": {
+    "placeholder": "Tìm kiếm nhiệm vụ..."
+  },
+  "filters": {
+    "button": "Bộ lọc",
+    "status": "Trạng thái",
+    "priority": "Độ ưu tiên",
+    "sortBy": "Sắp xếp theo",
+    "allStatuses": "Tất cả trạng thái",
+    "allPriorities": "Tất cả độ ưu tiên",
+    "showing": "Hiển thị {{filtered}} / {{total}} nhiệm vụ",
+    "clearFilters": "Xóa bộ lọc"
+  },
+  "sort": {
+    "id": "ID",
+    "status": "Trạng thái",
+    "priority": "Độ ưu tiên",
+    "idAsc": "ID (tăng dần)",
+    "idDesc": "ID (giảm dần)",
+    "titleAsc": "Tiêu đề (A-Z)",
+    "titleDesc": "Tiêu đề (Z-A)",
+    "statusAsc": "Trạng thái (chờ trước)",
+    "statusDesc": "Trạng thái (xong trước)",
+    "priorityAsc": "Độ ưu tiên (cao trước)",
+    "priorityDesc": "Độ ưu tiên (thấp trước)"
+  },
+  "views": {
+    "kanban": "Chế độ xem Kanban",
+    "list": "Chế độ xem danh sách",
+    "grid": "Chế độ xem lưới"
+  },
+  "kanban": {
+    "pending": "📋 Cần làm",
+    "inProgress": "🚀 Đang làm",
+    "done": "✅ Hoàn thành",
+    "blocked": "🚫 Bị chặn",
+    "deferred": "⏳ Hoãn lại",
+    "cancelled": "❌ Đã hủy",
+    "noTasksYet": "Chưa có nhiệm vụ nào",
+    "tasksWillAppear": "Nhiệm vụ sẽ xuất hiện ở đây",
+    "moveTasksHere": "Chuyển nhiệm vụ vào đây khi bắt đầu làm",
+    "completedTasksHere": "Nhiệm vụ hoàn thành sẽ xuất hiện ở đây",
+    "statusTasksHere": "Nhiệm vụ có trạng thái này sẽ xuất hiện ở đây"
+  },
+  "buttons": {
+    "help": "Hướng dẫn bắt đầu với TaskMaster",
+    "prds": "PRD",
+    "addPRD": "Thêm PRD",
+    "addTask": "Thêm nhiệm vụ",
+    "createNewPRD": "Tạo PRD mới",
+    "prdsAvailable": "{{count}} PRD khả dụng"
+  },
+  "prd": {
+    "modified": "Sửa đổi: {{date}}"
+  },
+  "statuses": {
+    "pending": "Đang chờ",
+    "in-progress": "Đang làm",
+    "done": "Hoàn thành",
+    "blocked": "Bị chặn",
+    "deferred": "Hoãn lại",
+    "cancelled": "Đã hủy"
+  },
+  "priorities": {
+    "high": "Cao",
+    "medium": "Trung bình",
+    "low": "Thấp"
+  },
+  "noMatchingTasks": {
+    "title": "Không có nhiệm vụ nào khớp bộ lọc",
+    "description": "Thử điều chỉnh tiêu chí tìm kiếm hoặc bộ lọc của bạn."
+  }
+}

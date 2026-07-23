@@ -1,0 +1,41 @@
+{
+  "toolbar": {
+    "changes": "thay đổi",
+    "previousChange": "Thay đổi trước",
+    "nextChange": "Thay đổi tiếp theo",
+    "hideDiff": "Ẩn tô sáng diff",
+    "showDiff": "Hiện tô sáng diff",
+    "settings": "Cài đặt trình soạn thảo",
+    "collapse": "Thu gọn trình soạn thảo",
+    "expand": "Mở rộng trình soạn thảo ra toàn màn hình"
+  },
+  "loading": "Đang tải {{fileName}}...",
+  "header": {
+    "showingChanges": "Đang hiển thị thay đổi"
+  },
+  "actions": {
+    "download": "Tải tệp xuống",
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "saved": "Đã lưu!",
+    "exitFullscreen": "Thoát toàn màn hình",
+    "fullscreen": "Toàn màn hình",
+    "close": "Đóng",
+    "previewMarkdown": "Xem trước markdown",
+    "editMarkdown": "Soạn markdown"
+  },
+  "footer": {
+    "lines": "Số dòng:",
+    "characters": "Số ký tự:",
+    "shortcuts": "Nhấn Ctrl+S để lưu • Esc để đóng"
+  },
+  "binaryFile": {
+    "title": "Tệp nhị phân",
+    "message": "Không thể hiển thị tệp \"{{fileName}}\" trong trình soạn thảo văn bản vì đây là tệp nhị phân."
+  },
+  "filePreview": {
+    "loading": "Đang tải bản xem trước...",
+    "error": "Không thể hiển thị tệp này.",
+    "openInNewTab": "Mở trong thẻ mới"
+  }
+}

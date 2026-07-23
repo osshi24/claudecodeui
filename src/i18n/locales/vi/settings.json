@@ -1,0 +1,572 @@
+{
+  "title": "Cài đặt",
+  "tabs": {
+    "account": "Tài khoản",
+    "permissions": "Quyền",
+    "mcpServers": "Máy chủ MCP",
+    "skills": "Kỹ năng",
+    "appearance": "Giao diện"
+  },
+  "account": {
+    "title": "Tài khoản",
+    "language": "Ngôn ngữ",
+    "languageLabel": "Ngôn ngữ hiển thị",
+    "languageDescription": "Chọn ngôn ngữ ưa thích cho giao diện",
+    "username": "Tên đăng nhập",
+    "email": "Email",
+    "profile": "Hồ sơ",
+    "changePassword": "Đổi mật khẩu"
+  },
+  "mcp": {
+    "title": "Máy chủ MCP",
+    "addServer": "Thêm máy chủ",
+    "editServer": "Sửa máy chủ",
+    "deleteServer": "Xóa máy chủ",
+    "serverName": "Tên máy chủ",
+    "serverType": "Loại máy chủ",
+    "config": "Cấu hình",
+    "testConnection": "Kiểm tra kết nối",
+    "status": "Trạng thái",
+    "connected": "Đã kết nối",
+    "disconnected": "Đã ngắt kết nối",
+    "scope": {
+      "label": "Phạm vi",
+      "user": "Người dùng",
+      "project": "Dự án"
+    }
+  },
+  "appearance": {
+    "title": "Giao diện",
+    "theme": "Chủ đề",
+    "codeEditor": "Trình soạn mã",
+    "editorTheme": "Chủ đề trình soạn thảo",
+    "wordWrap": "Ngắt dòng tự động",
+    "showMinimap": "Hiện minimap",
+    "lineNumbers": "Số dòng",
+    "fontSize": "Cỡ chữ"
+  },
+  "actions": {
+    "saveChanges": "Lưu thay đổi",
+    "resetToDefaults": "Khôi phục mặc định",
+    "cancelChanges": "Hủy thay đổi"
+  },
+  "voiceSettings": {
+    "title": "Giọng nói",
+    "description": "Nhập liệu bằng giọng nói và đọc to tin nhắn, thông qua backend âm thanh tương thích OpenAI.",
+    "enable": "Bật giọng nói",
+    "enableDescription": "Hiện nút micro và nút đọc to trên tin nhắn.",
+    "backendTitle": "Backend",
+    "backendDescription": "Trỏ tới OpenAI, Groq, hoặc máy chủ cục bộ (LocalAI, Speaches, Kokoro-FastAPI). Để trống để dùng mặc định của máy chủ.",
+    "baseUrl": "Base URL",
+    "apiKey": "API key",
+    "sttModel": "Mô hình chuyển giọng nói thành văn bản",
+    "ttsModel": "Mô hình chuyển văn bản thành giọng nói",
+    "voice": "Giọng đọc",
+    "format": "Định dạng âm thanh",
+    "note": "Base URL tùy chỉnh được trình duyệt gọi trực tiếp nên phải cho phép yêu cầu CORS từ trình duyệt. Để trống để dùng backend do máy chủ cấu hình."
+  },
+  "quickSettings": {
+    "title": "Cài đặt nhanh",
+    "sections": {
+      "appearance": "Giao diện",
+      "toolDisplay": "Hiển thị công cụ",
+      "inputSettings": "Cài đặt nhập liệu"
+    },
+    "darkMode": "Chế độ tối",
+    "showRawParameters": "Hiện tham số thô",
+    "showThinking": "Hiện suy nghĩ",
+    "sendByCtrlEnter": "Gửi bằng Ctrl+Enter",
+    "voiceEnabled": "Giọng nói (micro + đọc to)",
+    "sendByCtrlEnterDescription": "Khi bật, nhấn Ctrl+Enter mới gửi tin nhắn thay vì chỉ Enter. Hữu ích cho người dùng bộ gõ (IME) để tránh gửi nhầm.",
+    "dragHandle": {
+      "dragging": "Đang kéo",
+      "closePanel": "Đóng bảng cài đặt",
+      "openPanel": "Mở bảng cài đặt",
+      "draggingStatus": "Đang kéo...",
+      "toggleAndMove": "Nhấp để bật/tắt, kéo để di chuyển"
+    }
+  },
+  "terminalShortcuts": {
+    "title": "Phím tắt terminal",
+    "sectionKeys": "Phím",
+    "sectionNavigation": "Điều hướng",
+    "escape": "Escape",
+    "tab": "Tab",
+    "shiftTab": "Shift+Tab",
+    "arrowUp": "Mũi tên lên",
+    "arrowDown": "Mũi tên xuống",
+    "scrollDown": "Cuộn xuống",
+    "handle": {
+      "closePanel": "Đóng bảng phím tắt",
+      "openPanel": "Mở bảng phím tắt"
+    }
+  },
+  "mainTabs": {
+    "label": "Cài đặt",
+    "agents": "Agent",
+    "appearance": "Giao diện",
+    "git": "Git",
+    "apiTokens": "API & Token",
+    "voice": "Giọng nói",
+    "tasks": "Nhiệm vụ",
+    "browser": "Trình duyệt",
+    "notifications": "Thông báo",
+    "plugins": "Plugin",
+    "about": "Giới thiệu"
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "description": "Kiểm soát các loại sự kiện thông báo mà bạn nhận được.",
+    "webPush": {
+      "title": "Thông báo trên trình duyệt này",
+      "enable": "Bật thông báo",
+      "disable": "Tắt thông báo",
+      "enabled": "Thông báo đã được bật cho trình duyệt này",
+      "loading": "Đang cập nhật...",
+      "unsupported": "Trình duyệt này không hỗ trợ thông báo đẩy.",
+      "denied": "Thông báo đẩy đang bị chặn. Vui lòng cho phép trong cài đặt trình duyệt của bạn."
+    },
+    "desktop": {
+      "title": "Thông báo trên ứng dụng desktop này",
+      "enable": "Bật thông báo",
+      "disable": "Tắt thông báo",
+      "enabled": "Thông báo đã được bật cho ứng dụng desktop này",
+      "unsupported": "Hệ thống này không hỗ trợ thông báo desktop."
+    },
+    "sound": {
+      "title": "Âm thanh",
+      "description": "Phát âm báo ngắn khi một lượt chạy chat kết thúc hoặc cần phê duyệt công cụ.",
+      "enabled": "Đã bật",
+      "test": "Thử âm thanh"
+    },
+    "events": {
+      "title": "Loại sự kiện",
+      "actionRequired": "Cần hành động",
+      "stop": "Lượt chạy đã dừng",
+      "error": "Lượt chạy thất bại"
+    }
+  },
+  "appearanceSettings": {
+    "darkMode": {
+      "label": "Chế độ tối",
+      "description": "Chuyển giữa giao diện sáng và tối"
+    },
+    "projectSorting": {
+      "label": "Sắp xếp dự án",
+      "description": "Cách sắp xếp dự án trong thanh bên",
+      "alphabetical": "Theo bảng chữ cái",
+      "recentActivity": "Hoạt động gần đây"
+    },
+    "codeEditor": {
+      "title": "Trình soạn mã",
+      "theme": {
+        "label": "Chủ đề trình soạn thảo",
+        "description": "Chủ đề mặc định cho trình soạn mã"
+      },
+      "wordWrap": {
+        "label": "Ngắt dòng tự động",
+        "description": "Bật ngắt dòng tự động mặc định trong trình soạn thảo"
+      },
+      "showMinimap": {
+        "label": "Hiện minimap",
+        "description": "Hiển thị minimap để điều hướng dễ hơn trong chế độ xem diff"
+      },
+      "lineNumbers": {
+        "label": "Hiện số dòng",
+        "description": "Hiển thị số dòng trong trình soạn thảo"
+      },
+      "fontSize": {
+        "label": "Cỡ chữ",
+        "description": "Cỡ chữ trình soạn thảo tính bằng pixel"
+      }
+    }
+  },
+  "mcpForm": {
+    "title": {
+      "add": "Thêm máy chủ MCP",
+      "edit": "Sửa máy chủ MCP"
+    },
+    "importMode": {
+      "form": "Nhập bằng biểu mẫu",
+      "json": "Nhập từ JSON"
+    },
+    "scope": {
+      "label": "Phạm vi",
+      "userGlobal": "Người dùng (toàn cục)",
+      "projectLocal": "Dự án (cục bộ)",
+      "userDescription": "Phạm vi người dùng: Dùng được trong mọi dự án trên máy của bạn",
+      "projectDescription": "Phạm vi cục bộ: Chỉ dùng được trong dự án đã chọn",
+      "cannotChange": "Không thể đổi phạm vi khi sửa máy chủ hiện có"
+    },
+    "fields": {
+      "serverName": "Tên máy chủ",
+      "transportType": "Loại giao vận (transport)",
+      "command": "Lệnh",
+      "arguments": "Đối số (mỗi dòng một đối số)",
+      "jsonConfig": "Cấu hình JSON",
+      "url": "URL",
+      "envVars": "Biến môi trường (KEY=value, mỗi dòng một biến)",
+      "headers": "Header (KEY=value, mỗi dòng một mục)",
+      "selectProject": "Chọn một dự án..."
+    },
+    "placeholders": {
+      "serverName": "my-server"
+    },
+    "validation": {
+      "missingType": "Thiếu trường bắt buộc: type",
+      "stdioRequiresCommand": "Loại stdio yêu cầu trường command",
+      "httpRequiresUrl": "Loại {{type}} yêu cầu trường url",
+      "invalidJson": "Định dạng JSON không hợp lệ",
+      "jsonHelp": "Dán cấu hình máy chủ MCP của bạn ở định dạng JSON. Ví dụ:",
+      "jsonExampleStdio": "• stdio: {\"type\":\"stdio\",\"command\":\"npx\",\"args\":[\"@upstash/context7-mcp\"]}",
+      "jsonExampleHttp": "• http/sse: {\"type\":\"http\",\"url\":\"https://api.example.com/mcp\"}"
+    },
+    "configDetails": "Chi tiết cấu hình (từ {{configFile}})",
+    "projectPath": "Đường dẫn: {{path}}",
+    "actions": {
+      "cancel": "Hủy",
+      "saving": "Đang lưu...",
+      "addServer": "Thêm máy chủ",
+      "updateServer": "Cập nhật máy chủ"
+    }
+  },
+  "saveStatus": {
+    "success": "Đã lưu cài đặt thành công!",
+    "error": "Lưu cài đặt thất bại",
+    "saving": "Đang lưu..."
+  },
+  "footerActions": {
+    "save": "Lưu cài đặt",
+    "cancel": "Hủy"
+  },
+  "git": {
+    "title": "Cấu hình Git",
+    "description": "Cấu hình danh tính git cho commit. Các cài đặt này sẽ được áp dụng toàn cục qua git config --global",
+    "name": {
+      "label": "Tên Git",
+      "help": "Tên của bạn cho các commit git"
+    },
+    "email": {
+      "label": "Email Git",
+      "help": "Email của bạn cho các commit git"
+    },
+    "actions": {
+      "save": "Lưu cấu hình",
+      "saving": "Đang lưu..."
+    },
+    "status": {
+      "success": "Đã lưu thành công"
+    }
+  },
+  "apiKeys": {
+    "title": "API Key",
+    "description": "Tạo API key để truy cập API bên ngoài từ các ứng dụng khác.",
+    "newKey": {
+      "alertTitle": "⚠️ Hãy lưu lại API key của bạn",
+      "alertMessage": "Đây là lần duy nhất bạn thấy key này. Hãy cất giữ nó an toàn.",
+      "iveSavedIt": "Tôi đã lưu"
+    },
+    "form": {
+      "placeholder": "Tên API key (vd: Máy chủ production)",
+      "createButton": "Tạo",
+      "cancelButton": "Hủy"
+    },
+    "newButton": "API key mới",
+    "empty": "Chưa tạo API key nào.",
+    "list": {
+      "created": "Tạo lúc:",
+      "lastUsed": "Dùng lần cuối:"
+    },
+    "confirmDelete": "Bạn có chắc muốn xóa API key này không?",
+    "status": {
+      "active": "Đang hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "github": {
+      "title": "GitHub Token",
+      "description": "Thêm GitHub Personal Access Token để clone kho riêng tư qua API bên ngoài.",
+      "descriptionAlt": "Thêm GitHub Personal Access Token để clone kho riêng tư. Bạn cũng có thể truyền token trực tiếp trong yêu cầu API mà không cần lưu lại.",
+      "addButton": "Thêm token",
+      "form": {
+        "namePlaceholder": "Tên token (vd: Kho cá nhân)",
+        "tokenPlaceholder": "GitHub Personal Access Token (ghp_...)",
+        "descriptionPlaceholder": "Mô tả (tùy chọn)",
+        "addButton": "Thêm token",
+        "cancelButton": "Hủy",
+        "howToCreate": "Cách tạo GitHub Personal Access Token →"
+      },
+      "empty": "Chưa thêm GitHub token nào.",
+      "added": "Đã thêm:",
+      "confirmDelete": "Bạn có chắc muốn xóa GitHub token này không?"
+    },
+    "apiDocsLink": "Tài liệu API",
+    "documentation": {
+      "title": "Tài liệu API bên ngoài",
+      "description": "Tìm hiểu cách dùng API bên ngoài để kích hoạt phiên Claude/Cursor từ ứng dụng của bạn.",
+      "viewLink": "Xem tài liệu API →"
+    },
+    "loading": "Đang tải...",
+    "version": {
+      "updateAvailable": "Có bản cập nhật: v{{version}}"
+    }
+  },
+  "tasks": {
+    "checking": "Đang kiểm tra cài đặt TaskMaster...",
+    "notInstalled": {
+      "title": "Chưa cài TaskMaster AI CLI",
+      "description": "Cần TaskMaster CLI để dùng các tính năng quản lý nhiệm vụ. Cài đặt để bắt đầu:",
+      "installCommand": "npm install -g task-master-ai",
+      "viewOnGitHub": "Xem trên GitHub",
+      "afterInstallation": "Sau khi cài đặt:",
+      "steps": {
+        "restart": "Khởi động lại ứng dụng này",
+        "autoAvailable": "Các tính năng TaskMaster sẽ tự động khả dụng",
+        "initCommand": "Dùng task-master init trong thư mục dự án của bạn"
+      }
+    },
+    "settings": {
+      "enableLabel": "Bật tích hợp TaskMaster",
+      "enableDescription": "Hiện nhiệm vụ TaskMaster, banner và chỉ báo ở thanh bên trên toàn giao diện"
+    }
+  },
+  "agents": {
+    "authStatus": {
+      "checking": "Đang kiểm tra...",
+      "connected": "Đã kết nối",
+      "notConnected": "Chưa kết nối",
+      "disconnected": "Đã ngắt kết nối",
+      "checkingAuth": "Đang kiểm tra trạng thái xác thực...",
+      "loggedInAs": "Đã đăng nhập với {{email}}",
+      "authenticatedUser": "người dùng đã xác thực"
+    },
+    "account": {
+      "claude": {
+        "description": "Trợ lý AI Claude của Anthropic"
+      },
+      "cursor": {
+        "description": "Trình soạn mã AI Cursor"
+      },
+      "codex": {
+        "description": "Trợ lý AI Codex của OpenAI"
+      },
+      "opencode": {
+        "description": "Trợ lý CLI OpenCode"
+      }
+    },
+    "connectionStatus": "Trạng thái kết nối",
+    "login": {
+      "title": "Đăng nhập",
+      "reAuthenticate": "Xác thực lại",
+      "description": "Đăng nhập vào tài khoản {{agent}} của bạn để bật các tính năng AI",
+      "reAuthDescription": "Đăng nhập bằng tài khoản khác hoặc làm mới thông tin xác thực",
+      "button": "Đăng nhập",
+      "reLoginButton": "Đăng nhập lại"
+    },
+    "error": "Lỗi: {{error}}"
+  },
+  "permissions": {
+    "title": "Cài đặt quyền",
+    "skipPermissions": {
+      "label": "Bỏ qua hỏi quyền (thận trọng khi dùng)",
+      "claudeDescription": "Tương đương cờ --dangerously-skip-permissions",
+      "cursorDescription": "Tương đương cờ -f trong Cursor CLI"
+    },
+    "allowedTools": {
+      "title": "Công cụ được phép",
+      "description": "Các công cụ được tự động cho phép mà không cần hỏi quyền",
+      "placeholder": "vd: \"Bash(git log:*)\" hoặc \"Write\"",
+      "quickAdd": "Thêm nhanh công cụ phổ biến:",
+      "empty": "Chưa cấu hình công cụ được phép nào"
+    },
+    "blockedTools": {
+      "title": "Công cụ bị chặn",
+      "description": "Các công cụ bị tự động chặn mà không cần hỏi quyền",
+      "placeholder": "vd: \"Bash(rm:*)\"",
+      "empty": "Chưa cấu hình công cụ bị chặn nào"
+    },
+    "allowedCommands": {
+      "title": "Lệnh shell được phép",
+      "description": "Các lệnh shell được tự động cho phép mà không cần hỏi",
+      "placeholder": "vd: \"Shell(ls)\" hoặc \"Shell(git status)\"",
+      "quickAdd": "Thêm nhanh lệnh phổ biến:",
+      "empty": "Chưa cấu hình lệnh được phép nào"
+    },
+    "blockedCommands": {
+      "title": "Lệnh shell bị chặn",
+      "description": "Các lệnh shell bị tự động chặn",
+      "placeholder": "vd: \"Shell(rm -rf)\" hoặc \"Shell(sudo)\"",
+      "empty": "Chưa cấu hình lệnh bị chặn nào"
+    },
+    "toolExamples": {
+      "title": "Ví dụ mẫu công cụ:",
+      "bashGitLog": "- Cho phép mọi lệnh git log",
+      "bashGitDiff": "- Cho phép mọi lệnh git diff",
+      "write": "- Cho phép mọi thao tác của công cụ Write",
+      "bashRm": "- Chặn mọi lệnh rm (nguy hiểm)"
+    },
+    "shellExamples": {
+      "title": "Ví dụ lệnh shell:",
+      "ls": "- Cho phép lệnh ls",
+      "gitStatus": "- Cho phép git status",
+      "npmInstall": "- Cho phép npm install",
+      "rmRf": "- Chặn xóa đệ quy"
+    },
+    "codex": {
+      "permissionMode": "Chế độ quyền",
+      "description": "Kiểm soát cách Codex xử lý việc chỉnh sửa tệp và thực thi lệnh",
+      "modes": {
+        "default": {
+          "title": "Mặc định",
+          "description": "Chỉ các lệnh tin cậy (ls, cat, grep, git status, v.v.) chạy tự động. Các lệnh khác bị bỏ qua. Có thể ghi vào workspace."
+        },
+        "acceptEdits": {
+          "title": "Chấp nhận chỉnh sửa",
+          "description": "Mọi lệnh chạy tự động trong phạm vi workspace. Chế độ tự động hoàn toàn với thực thi trong sandbox."
+        },
+        "bypassPermissions": {
+          "title": "Bỏ qua quyền",
+          "description": "Toàn quyền truy cập hệ thống, không giới hạn. Mọi lệnh chạy tự động với đầy đủ quyền truy cập ổ đĩa và mạng. Hãy thận trọng."
+        }
+      },
+      "technicalDetails": "Chi tiết kỹ thuật",
+      "technicalInfo": {
+        "default": "sandboxMode=workspace-write, approvalPolicy=untrusted. Lệnh tin cậy: cat, cd, grep, head, ls, pwd, tail, git status/log/diff/show, find (không kèm -exec), v.v.",
+        "acceptEdits": "sandboxMode=workspace-write, approvalPolicy=never. Mọi lệnh tự chạy trong thư mục dự án.",
+        "bypassPermissions": "sandboxMode=danger-full-access, approvalPolicy=never. Toàn quyền hệ thống, chỉ dùng trong môi trường tin cậy.",
+        "overrideNote": "Bạn có thể ghi đè theo từng phiên bằng nút chế độ trong giao diện chat."
+      }
+    },
+    "actions": {
+      "add": "Thêm"
+    }
+  },
+  "mcpServers": {
+    "title": "Máy chủ MCP",
+    "description": {
+      "claude": "Máy chủ Model Context Protocol cung cấp thêm công cụ và nguồn dữ liệu cho Claude",
+      "cursor": "Máy chủ Model Context Protocol cung cấp thêm công cụ và nguồn dữ liệu cho Cursor",
+      "codex": "Máy chủ Model Context Protocol cung cấp thêm công cụ và nguồn dữ liệu cho Codex",
+      "opencode": "Máy chủ Model Context Protocol cung cấp thêm công cụ và nguồn dữ liệu cho OpenCode"
+    },
+    "addButton": "Thêm máy chủ MCP",
+    "empty": "Chưa cấu hình máy chủ MCP nào",
+    "serverType": "Loại",
+    "scope": {
+      "local": "cục bộ",
+      "user": "người dùng"
+    },
+    "config": {
+      "command": "Lệnh",
+      "url": "URL",
+      "args": "Đối số",
+      "environment": "Môi trường"
+    },
+    "tools": {
+      "title": "Công cụ",
+      "count": "({{count}}):",
+      "more": "+{{count}} nữa"
+    },
+    "actions": {
+      "edit": "Sửa máy chủ",
+      "delete": "Xóa máy chủ"
+    },
+    "managed": {
+      "badge": "Được quản lý",
+      "hint": "Do CloudCLI quản lý."
+    },
+    "help": {
+      "title": "Về Codex MCP",
+      "description": "Codex hỗ trợ máy chủ MCP dạng stdio. Bạn có thể thêm máy chủ để mở rộng khả năng của Codex với công cụ và tài nguyên bổ sung."
+    }
+  },
+  "pluginSettings": {
+    "title": "Plugin",
+    "description": "Mở rộng giao diện bằng plugin tùy chỉnh. Cài từ git hoặc thả một thư mục vào ~/.claude-code-ui/plugins/",
+    "installPlaceholder": "https://github.com/user/my-plugin",
+    "installButton": "Cài đặt",
+    "installing": "Đang cài…",
+    "securityWarning": "Chỉ cài plugin mà bạn đã xem qua mã nguồn hoặc từ tác giả bạn tin tưởng.",
+    "scanningPlugins": "Đang quét plugin…",
+    "noPluginsInstalled": "Chưa cài plugin nào",
+    "pullLatest": "Kéo bản mới nhất từ git",
+    "noGitRemote": "Không có git remote — không thể cập nhật",
+    "uninstallPlugin": "Gỡ plugin",
+    "confirmUninstall": "Nhấp lần nữa để xác nhận",
+    "confirmUninstallMessage": "Gỡ {{name}}? Hành động này không thể hoàn tác.",
+    "cancel": "Hủy",
+    "remove": "Gỡ bỏ",
+    "updateFailed": "Cập nhật thất bại",
+    "installFailed": "Cài đặt thất bại",
+    "uninstallFailed": "Gỡ cài đặt thất bại",
+    "toggleFailed": "Bật/tắt thất bại",
+    "starterPluginLabel": "Plugin khởi đầu",
+    "starter": "Khởi đầu",
+    "docs": "Tài liệu",
+    "sections": {
+      "officialTitle": "Plugin chính thức",
+      "officialDescription": "Do đội ngũ CloudCLI duy trì và sẵn sàng cài trực tiếp.",
+      "unofficialTitle": "Plugin khác",
+      "unofficialDescription": "Plugin và tích hợp không chính thức từ người dùng khác. Hãy xem mã nguồn trước khi cài."
+    },
+    "starterPlugin": {
+      "name": "Thống kê dự án",
+      "badge": "khởi đầu",
+      "description": "Số lượng tệp, số dòng mã, phân loại theo loại tệp và hoạt động gần đây của dự án.",
+      "install": "Cài đặt"
+    },
+    "terminalPlugin": {
+      "name": "Terminal",
+      "badge": "chính thức",
+      "description": "Terminal tích hợp với toàn quyền truy cập shell ngay trong giao diện.",
+      "install": "Cài đặt"
+    },
+    "scheduledPromptPlugin": {
+      "name": "Prompt định kỳ",
+      "badge": "không chính thức",
+      "description": "Lên lịch prompt cho workspace, xem lịch sử chạy và quản lý các tác vụ cục bộ định kỳ.",
+      "install": "Cài đặt"
+    },
+    "claudeWatchPlugin": {
+      "name": "Claude Watch",
+      "badge": "không chính thức",
+      "description": "Theo dõi các phiên Claude Code chạy dài để phát hiện treo và cung cấp điều khiển tiến trình.",
+      "install": "Cài đặt"
+    },
+    "prismCloudCLI": {
+      "name": "PRISM CloudCLI",
+      "badge": "không chính thức",
+      "description": "Phân tích phiên cho Claude Code, ngay trong CloudCLI. Xem vì sao phiên của bạn tốn nhiều token mà không cần rời trình duyệt.",
+      "install": "Cài đặt"
+    },
+    "sessionManagerPlugin": {
+      "name": "Phiên",
+      "badge": "không chính thức",
+      "description": "Xem, quản lý và dừng các phiên Claude Code đang hoạt động.",
+      "install": "Cài đặt"
+    },
+    "tokenCostCalculatorPlugin": {
+      "name": "Tính chi phí token",
+      "badge": "không chính thức",
+      "description": "Tính chi phí API từ giá mô hình và lượng token sử dụng, hỗ trợ bảng giá mô hình có sẵn.",
+      "install": "Cài đặt"
+    },
+    "taskQueuePlugin": {
+      "name": "Hàng đợi nhiệm vụ",
+      "badge": "không chính thức",
+      "description": "Bảng điều khiển hàng đợi nhiệm vụ để xem, lọc và khởi chạy các tác vụ agent.",
+      "install": "Cài đặt"
+    },
+    "githubIssuesBoardPlugin": {
+      "name": "Bảng GitHub Issues",
+      "badge": "không chính thức",
+      "description": "Bảng Kanban cho GitHub Issues với đồng bộ hai chiều TaskMaster và tự động cài skill CLI /github-task",
+      "install": "Cài đặt"
+    },
+    "morePlugins": "Thêm",
+    "enable": "Bật",
+    "disable": "Tắt",
+    "installAriaLabel": "URL kho git của plugin",
+    "tab": "thẻ",
+    "runningStatus": "đang chạy"
+  }
+}

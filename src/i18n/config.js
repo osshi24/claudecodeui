@@ -93,6 +93,15 @@ import zhTWCodeEditor from './locales/zh-TW/codeEditor.json';
 // eslint-disable-next-line import-x/order
 import zhTWTasks from './locales/zh-TW/tasks.json';
 
+import viCommon from './locales/vi/common.json';
+import viSettings from './locales/vi/settings.json';
+import viAuth from './locales/vi/auth.json';
+import viSidebar from './locales/vi/sidebar.json';
+import viChat from './locales/vi/chat.json';
+import viCodeEditor from './locales/vi/codeEditor.json';
+// eslint-disable-next-line import-x/order
+import viTasks from './locales/vi/tasks.json';
+
 // Import supported languages configuration
 import { languages } from './languages.js';
 
@@ -195,6 +204,15 @@ i18n
         chat: zhTWChat,
         codeEditor: zhTWCodeEditor,
         tasks: zhTWTasks,
+      },
+      vi: {
+        common: viCommon,
+        settings: viSettings,
+        auth: viAuth,
+        sidebar: viSidebar,
+        chat: viChat,
+        codeEditor: viCodeEditor,
+        tasks: viTasks,
       },
     },
 

@@ -1,0 +1,145 @@
+{
+  "projects": {
+    "title": "Dự án",
+    "newProject": "Dự án mới",
+    "deleteProject": "Gỡ dự án",
+    "renameProject": "Đổi tên dự án",
+    "noProjects": "Không tìm thấy dự án nào",
+    "loadingProjects": "Đang tải dự án...",
+    "searchPlaceholder": "Tìm kiếm dự án...",
+    "projectNamePlaceholder": "Tên dự án",
+    "starred": "Đã gắn sao",
+    "all": "Tất cả",
+    "untitledSession": "Phiên chưa đặt tên",
+    "newSession": "Phiên mới",
+    "codexSession": "Phiên Codex",
+    "fetchingProjects": "Đang lấy các dự án và phiên Claude của bạn",
+    "projects": "dự án",
+    "noMatchingProjects": "Không có dự án phù hợp",
+    "tryDifferentSearch": "Thử điều chỉnh từ khóa tìm kiếm",
+    "runClaudeCli": "Chạy Claude CLI trong một thư mục dự án để bắt đầu"
+  },
+  "app": {
+    "title": "CloudCLI",
+    "subtitle": "Giao diện trợ lý lập trình AI"
+  },
+  "sessions": {
+    "title": "Phiên",
+    "newSession": "Phiên mới",
+    "deleteSession": "Xóa phiên",
+    "renameSession": "Đổi tên phiên",
+    "noSessions": "Chưa có phiên nào",
+    "loadingSessions": "Đang tải phiên...",
+    "unnamed": "Chưa đặt tên",
+    "loading": "Đang tải...",
+    "showMore": "Hiện thêm phiên"
+  },
+  "tooltips": {
+    "viewEnvironments": "Xem môi trường",
+    "hideSidebar": "Ẩn thanh bên",
+    "createProject": "Tạo dự án mới",
+    "refresh": "Làm mới dự án và phiên (Ctrl+R)",
+    "renameProject": "Đổi tên dự án (F2)",
+    "deleteProject": "Gỡ dự án khỏi thanh bên (Delete)",
+    "addToFavorites": "Thêm vào yêu thích",
+    "removeFromFavorites": "Bỏ khỏi yêu thích",
+    "editSessionName": "Tự sửa tên phiên",
+    "deleteSession": "Xóa vĩnh viễn phiên này",
+    "activeSessionIndicator": "Phiên hoạt động gần đây (10 phút qua)",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "clearSearch": "Xóa tìm kiếm",
+    "openCommandPalette": "Mở bảng lệnh",
+    "attentionRequiredIndicator": "Phiên cần được chú ý"
+  },
+  "navigation": {
+    "chat": "Trò chuyện",
+    "files": "Tệp",
+    "git": "Git",
+    "terminal": "Terminal",
+    "tasks": "Nhiệm vụ"
+  },
+  "actions": {
+    "refresh": "Làm mới",
+    "settings": "Cài đặt",
+    "collapseAll": "Thu gọn tất cả",
+    "expandAll": "Mở rộng tất cả",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "rename": "Đổi tên",
+    "joinCommunity": "Tham gia cộng đồng",
+    "reportIssue": "Báo lỗi",
+    "starOnGithub": "Gắn sao trên GitHub"
+  },
+  "branding": {
+    "openSource": "Mã nguồn mở"
+  },
+  "status": {
+    "active": "Đang hoạt động",
+    "inactive": "Không hoạt động",
+    "thinking": "Đang suy nghĩ...",
+    "error": "Lỗi",
+    "aborted": "Đã hủy",
+    "unknown": "Không rõ"
+  },
+  "time": {
+    "justNow": "Vừa xong",
+    "oneMinuteAgo": "1 phút trước",
+    "minutesAgo": "{{count}} phút trước",
+    "oneHourAgo": "1 giờ trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "oneDayAgo": "1 ngày trước",
+    "daysAgo": "{{count}} ngày trước"
+  },
+  "messages": {
+    "deleteConfirm": "Bạn có chắc muốn xóa mục này không?",
+    "renameSuccess": "Đã đổi tên thành công",
+    "deleteSuccess": "Đã xóa thành công",
+    "errorOccurred": "Đã xảy ra lỗi",
+    "deleteSessionConfirm": "Bạn có chắc muốn xóa phiên này? Hành động này không thể hoàn tác.",
+    "deleteProjectConfirm": "Gỡ dự án này khỏi thanh bên? Tệp dự án, bộ nhớ và dữ liệu phiên của bạn sẽ không bị xóa.",
+    "enterProjectPath": "Vui lòng nhập đường dẫn dự án",
+    "deleteSessionFailed": "Xóa phiên thất bại. Vui lòng thử lại.",
+    "deleteSessionError": "Lỗi khi xóa phiên. Vui lòng thử lại.",
+    "renameSessionFailed": "Đổi tên phiên thất bại. Vui lòng thử lại.",
+    "renameSessionError": "Lỗi khi đổi tên phiên. Vui lòng thử lại.",
+    "deleteProjectFailed": "Gỡ dự án thất bại. Vui lòng thử lại.",
+    "deleteProjectError": "Lỗi khi gỡ dự án. Vui lòng thử lại.",
+    "createProjectFailed": "Tạo dự án thất bại. Vui lòng thử lại.",
+    "createProjectError": "Lỗi khi tạo dự án. Vui lòng thử lại.",
+    "updateProjectError": "Lỗi khi cập nhật dự án. Vui lòng thử lại.",
+    "refreshError": "Làm mới thất bại. Vui lòng thử lại.",
+    "restoreProjectFailed": "Khôi phục dự án thất bại. Vui lòng thử lại.",
+    "restoreProjectError": "Lỗi khi khôi phục dự án. Vui lòng thử lại.",
+    "restoreSessionFailed": "Khôi phục phiên thất bại. Vui lòng thử lại.",
+    "restoreSessionError": "Lỗi khi khôi phục phiên. Vui lòng thử lại."
+  },
+  "version": {
+    "updateAvailable": "Có bản cập nhật",
+    "restartRequired": "Đã cài bản cập nhật — khởi động lại máy chủ để áp dụng"
+  },
+  "search": {
+    "modeProjects": "Dự án",
+    "modeConversations": "Hội thoại",
+    "conversationsPlaceholder": "Tìm trong hội thoại...",
+    "searching": "Đang tìm...",
+    "noResults": "Không tìm thấy kết quả",
+    "tryDifferentQuery": "Thử từ khóa tìm kiếm khác",
+    "matches_one": "{{count}} kết quả",
+    "matches_other": "{{count}} kết quả",
+    "projectsScanned_one": "Đã quét {{count}} dự án",
+    "projectsScanned_other": "Đã quét {{count}} dự án"
+  },
+  "deleteConfirmation": {
+    "deleteProject": "Gỡ dự án",
+    "deleteSession": "Xóa phiên",
+    "confirmDelete": "Bạn muốn làm gì với",
+    "sessionCount_one": "Dự án này chứa {{count}} hội thoại.",
+    "sessionCount_other": "Dự án này chứa {{count}} hội thoại.",
+    "removeFromSidebar": "Chỉ gỡ khỏi thanh bên",
+    "deleteAllData": "Xóa vĩnh viễn toàn bộ dữ liệu",
+    "allConversationsDeleted": "Dự án sẽ được gỡ khỏi thanh bên. Tệp, bộ nhớ và dữ liệu phiên của bạn sẽ được giữ nguyên.",
+    "cannotUndo": "Bạn có thể thêm lại dự án sau."
+  }
+}

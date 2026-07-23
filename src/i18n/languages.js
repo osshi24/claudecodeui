@@ -59,6 +59,11 @@ export const languages = [
     label: 'Italian',
     nativeName: 'Italiano',
   },
+  {
+    value: 'vi',
+    label: 'Vietnamese',
+    nativeName: 'Tiếng Việt',
+  },
 ];
 
 /**
