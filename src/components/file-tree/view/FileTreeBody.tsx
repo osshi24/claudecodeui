@@ -1,7 +1,7 @@
 import type { ReactNode, RefObject } from 'react';
 import { Folder, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { FileTreeNode, FileTreeViewMode } from '../types/types';
+import type { FileTreeDragMove, FileTreeNode, FileTreeViewMode } from '../types/types';
 import FileTreeEmptyState from './FileTreeEmptyState';
 import FileTreeList from './FileTreeList';
 
@@ -16,6 +16,7 @@ type FileTreeBodyProps = {
   formatFileSize: (bytes?: number) => string;
   formatRelativeTime: (date?: string) => string;
   onRename?: (item: FileTreeNode) => void;
+  onMove?: (item: FileTreeNode) => void;
   onDelete?: (item: FileTreeNode) => void;
   onNewFile?: (path: string) => void;
   onNewFolder?: (path: string) => void;
@@ -30,6 +31,7 @@ type FileTreeBodyProps = {
   handleCancelRename?: () => void;
   renameInputRef?: RefObject<HTMLInputElement>;
   operationLoading?: boolean;
+  dragMove?: FileTreeDragMove;
 };
 
 export default function FileTreeBody({
@@ -43,6 +45,7 @@ export default function FileTreeBody({
   formatFileSize,
   formatRelativeTime,
   onRename,
+  onMove,
   onDelete,
   onNewFile,
   onNewFolder,
@@ -56,6 +59,7 @@ export default function FileTreeBody({
   handleCancelRename,
   renameInputRef,
   operationLoading,
+  dragMove,
 }: FileTreeBodyProps) {
   const { t } = useTranslation();
 
@@ -83,6 +87,7 @@ export default function FileTreeBody({
           formatFileSize={formatFileSize}
           formatRelativeTime={formatRelativeTime}
           onRename={onRename}
+          onMove={onMove}
           onDelete={onDelete}
           onNewFile={onNewFile}
           onNewFolder={onNewFolder}
@@ -96,6 +101,7 @@ export default function FileTreeBody({
           handleCancelRename={handleCancelRename}
           renameInputRef={renameInputRef}
           operationLoading={operationLoading}
+          dragMove={dragMove}
         />
       )}
     </>

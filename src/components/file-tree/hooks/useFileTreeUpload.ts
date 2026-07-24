@@ -9,6 +9,7 @@ import {
   MAX_FILE_UPLOAD_SIZE_BYTES,
   MAX_FILE_UPLOAD_SIZE_LABEL,
 } from '../constants/constants';
+import { isInternalMoveDrag } from './useFileTreeDragMove';
 
 type UseFileTreeUploadOptions = {
   selectedProject: Project | null;
@@ -383,17 +384,28 @@ export const useFileTreeUpload = ({
   );
 
   const handleDragEnter = useCallback((e: DragEvent) => {
+    // Reordering nodes inside the tree is not an upload; showing the drop
+    // overlay for it would be wrong, and claiming the drop would break the move.
+    if (isInternalMoveDrag(e.dataTransfer)) {
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(true);
   }, []);
 
   const handleDragOver = useCallback((e: DragEvent) => {
+    if (isInternalMoveDrag(e.dataTransfer)) {
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
   const handleDragLeave = useCallback((e: DragEvent) => {
+    if (isInternalMoveDrag(e.dataTransfer)) {
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
     // Only set isDragOver to false if we're leaving the entire tree
@@ -405,6 +417,9 @@ export const useFileTreeUpload = ({
 
   const handleDrop = useCallback(
     async (e: DragEvent) => {
+      if (isInternalMoveDrag(e.dataTransfer)) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       setIsDragOver(false);

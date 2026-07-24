@@ -1,5 +1,5 @@
 import type { ReactNode, RefObject } from 'react';
-import type { FileTreeNode as FileTreeNodeType, FileTreeViewMode } from '../types/types';
+import type { FileTreeDragMove, FileTreeNode as FileTreeNodeType, FileTreeViewMode } from '../types/types';
 import FileTreeNode from './FileTreeNode';
 
 type FileTreeListProps = {
@@ -11,6 +11,7 @@ type FileTreeListProps = {
   formatFileSize: (bytes?: number) => string;
   formatRelativeTime: (date?: string) => string;
   onRename?: (item: FileTreeNodeType) => void;
+  onMove?: (item: FileTreeNodeType) => void;
   onDelete?: (item: FileTreeNodeType) => void;
   onNewFile?: (path: string) => void;
   onNewFolder?: (path: string) => void;
@@ -25,6 +26,7 @@ type FileTreeListProps = {
   handleCancelRename?: () => void;
   renameInputRef?: RefObject<HTMLInputElement>;
   operationLoading?: boolean;
+  dragMove?: FileTreeDragMove;
 };
 
 export default function FileTreeList({
@@ -36,6 +38,7 @@ export default function FileTreeList({
   formatFileSize,
   formatRelativeTime,
   onRename,
+  onMove,
   onDelete,
   onNewFile,
   onNewFolder,
@@ -49,6 +52,7 @@ export default function FileTreeList({
   handleCancelRename,
   renameInputRef,
   operationLoading,
+  dragMove,
 }: FileTreeListProps) {
   return (
     <div>
@@ -64,6 +68,7 @@ export default function FileTreeList({
           formatFileSize={formatFileSize}
           formatRelativeTime={formatRelativeTime}
           onRename={onRename}
+          onMove={onMove}
           onDelete={onDelete}
           onNewFile={onNewFile}
           onNewFolder={onNewFolder}
@@ -77,6 +82,7 @@ export default function FileTreeList({
           handleCancelRename={handleCancelRename}
           renameInputRef={renameInputRef}
           operationLoading={operationLoading}
+          dragMove={dragMove}
         />
       ))}
     </div>

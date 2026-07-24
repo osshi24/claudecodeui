@@ -1,7 +1,7 @@
 import type { ReactNode, RefObject } from 'react';
 import { ChevronRight, Folder, FolderOpen } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import type { FileTreeNode as FileTreeNodeType, FileTreeViewMode } from '../types/types';
+import type { FileTreeDragMove, FileTreeNode as FileTreeNodeType, FileTreeViewMode } from '../types/types';
 import { Input } from '../../../shared/view/ui';
 import FileContextMenu from './FileContextMenu';
 
@@ -15,6 +15,7 @@ type FileTreeNodeProps = {
   formatFileSize: (bytes?: number) => string;
   formatRelativeTime: (date?: string) => string;
   onRename?: (item: FileTreeNodeType) => void;
+  onMove?: (item: FileTreeNodeType) => void;
   onDelete?: (item: FileTreeNodeType) => void;
   onNewFile?: (path: string) => void;
   onNewFolder?: (path: string) => void;
@@ -29,6 +30,7 @@ type FileTreeNodeProps = {
   handleCancelRename?: () => void;
   renameInputRef?: RefObject<HTMLInputElement>;
   operationLoading?: boolean;
+  dragMove?: FileTreeDragMove;
 };
 
 type TreeItemIconProps = {
@@ -69,6 +71,7 @@ export default function FileTreeNode({
   formatFileSize,
   formatRelativeTime,
   onRename,
+  onMove,
   onDelete,
   onNewFile,
   onNewFolder,
@@ -82,11 +85,16 @@ export default function FileTreeNode({
   handleCancelRename,
   renameInputRef,
   operationLoading,
+  dragMove,
 }: FileTreeNodeProps) {
   const isDirectory = item.type === 'directory';
   const isOpen = isDirectory && expandedDirs.has(item.path);
   const hasChildren = Boolean(isDirectory && item.children && item.children.length > 0);
   const isRenaming = renamingItem?.path === item.path;
+  const isBeingDragged = dragMove?.draggedPath === item.path;
+  // Only folders light up: a file row resolves to its parent folder, so
+  // highlighting the file too would mark every sibling as a target.
+  const isDropTarget = Boolean(isDirectory && dragMove && dragMove.dropTargetDir === item.path);
 
   const nameClassName = cn(
     'text-[13px] leading-tight truncate',
@@ -102,6 +110,8 @@ export default function FileTreeNode({
       : 'group flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer rounded-sm hover:bg-accent/60 transition-colors duration-100',
     isDirectory && isOpen && 'border-l-2 border-primary/30',
     (isDirectory && !isOpen) || !isDirectory ? 'border-l-2 border-transparent' : '',
+    isBeingDragged && 'opacity-40',
+    isDropTarget && 'bg-primary/15 ring-1 ring-inset ring-primary/50',
   );
 
   // Render rename input if this item is being renamed
@@ -140,6 +150,11 @@ export default function FileTreeNode({
       className={rowClassName}
       style={{ paddingLeft: `${level * 16 + 4}px` }}
       onClick={() => onItemClick(item)}
+      draggable={Boolean(dragMove)}
+      onDragStart={dragMove ? (event) => dragMove.handleDragStart(item, event) : undefined}
+      onDragEnd={dragMove ? dragMove.handleDragEnd : undefined}
+      onDragOver={dragMove ? (event) => dragMove.handleDragOverTarget(item, event) : undefined}
+      onDrop={dragMove ? (event) => dragMove.handleDropOnTarget(item, event) : undefined}
     >
       {viewMode === 'detailed' ? (
         <>
@@ -178,7 +193,7 @@ export default function FileTreeNode({
   );
 
   // Check if context menu callbacks are provided
-  const hasContextMenu = onRename || onDelete || onNewFile || onNewFolder || onCopyPath || onDownload || onRefresh;
+  const hasContextMenu = onRename || onMove || onDelete || onNewFile || onNewFolder || onCopyPath || onDownload || onRefresh;
 
   return (
     <div className="select-none">
@@ -186,6 +201,7 @@ export default function FileTreeNode({
         <FileContextMenu
           item={item}
           onRename={onRename}
+          onMove={onMove}
           onDelete={onDelete}
           onNewFile={onNewFile}
           onNewFolder={onNewFolder}
@@ -218,6 +234,7 @@ export default function FileTreeNode({
               formatFileSize={formatFileSize}
               formatRelativeTime={formatRelativeTime}
               onRename={onRename}
+              onMove={onMove}
               onDelete={onDelete}
               onNewFile={onNewFile}
               onNewFolder={onNewFolder}
@@ -231,6 +248,7 @@ export default function FileTreeNode({
               handleCancelRename={handleCancelRename}
               renameInputRef={renameInputRef}
               operationLoading={operationLoading}
+              dragMove={dragMove}
             />
           ))}
         </div>

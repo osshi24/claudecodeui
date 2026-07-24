@@ -14,6 +14,13 @@ export const MAX_FILE_UPLOAD_SIZE_LABEL = `${MAX_FILE_UPLOAD_SIZE_MB}MB`;
 
 export const MAX_FILE_UPLOAD_COUNT = 20;
 
+/**
+ * Marks a drag as an in-tree move. The upload drop zone checks for it so that
+ * dragging a node around never looks like an incoming file upload — during
+ * dragover only `dataTransfer.types` is readable, so the flag has to be a type.
+ */
+export const FILE_TREE_MOVE_MIME = 'application/x-cloudcli-file-move';
+
 export const IMAGE_FILE_EXTENSIONS = new Set([
   'png',
   'jpg',

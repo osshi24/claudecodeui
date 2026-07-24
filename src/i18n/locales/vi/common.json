@@ -123,6 +123,7 @@
     "collapseAll": "Thu gọn tất cả",
     "context": {
       "rename": "Đổi tên",
+      "move": "Di chuyển tới...",
       "delete": "Xóa",
       "copyPath": "Sao chép đường dẫn",
       "download": "Tải xuống",
@@ -131,6 +132,19 @@
       "refresh": "Làm mới",
       "menuLabel": "Menu ngữ cảnh tệp",
       "loading": "Đang tải..."
+    },
+    "uploadFolder": "Tải thư mục lên (giữ nguyên cấu trúc)",
+    "move": {
+      "title": "Di chuyển tới thư mục",
+      "confirm": "Di chuyển",
+      "projectRoot": "Thư mục gốc dự án",
+      "noDestinations": "Không có thư mục nào khác để di chuyển vào."
+    },
+    "toast": {
+      "pathCopied": "Đã sao chép đường dẫn",
+      "copyFailed": "Sao chép đường dẫn thất bại",
+      "fileMoved": "Đã di chuyển tệp",
+      "folderMoved": "Đã di chuyển thư mục"
     }
   },
   "projectWizard": {

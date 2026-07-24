@@ -828,6 +828,117 @@ app.put('/api/projects/:projectId/files/rename', authenticateToken, async (req, 
     }
 });
 
+// PUT /api/projects/:projectId/files/move - Move file or directory into another folder
+app.put('/api/projects/:projectId/files/move', authenticateToken, async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { sourcePath, targetDir } = req.body;
+
+        if (!sourcePath) {
+            return res.status(400).json({ error: 'sourcePath is required' });
+        }
+        if (typeof targetDir !== 'string') {
+            return res.status(400).json({ error: 'targetDir is required' });
+        }
+
+        // Resolve the project directory through the DB using the new projectId.
+        const projectRoot = await projectsDb.getProjectPathById(projectId);
+        if (!projectRoot) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        const sourceValidation = validatePathInProject(projectRoot, sourcePath);
+        if (!sourceValidation.valid) {
+            return res.status(403).json({ error: sourceValidation.error });
+        }
+        const resolvedSource = sourceValidation.resolved;
+
+        let sourceStats;
+        try {
+            sourceStats = await fsPromises.stat(resolvedSource);
+        } catch {
+            return res.status(404).json({ error: 'File or directory not found' });
+        }
+
+        // The project root is a legitimate destination, but validatePathInProject
+        // only accepts paths strictly below the root, so it is resolved up front.
+        // Anything else still has to clear the guard.
+        const resolvedProjectRoot = path.resolve(projectRoot);
+        const requestedTargetDir = !targetDir || targetDir === '.' || targetDir === './'
+            ? resolvedProjectRoot
+            : (path.isAbsolute(targetDir)
+                ? path.resolve(targetDir)
+                : path.resolve(resolvedProjectRoot, targetDir));
+
+        let resolvedTargetDir;
+        if (requestedTargetDir === resolvedProjectRoot) {
+            resolvedTargetDir = resolvedProjectRoot;
+        } else {
+            const targetValidation = validatePathInProject(projectRoot, requestedTargetDir);
+            if (!targetValidation.valid) {
+                return res.status(403).json({ error: targetValidation.error });
+            }
+            resolvedTargetDir = targetValidation.resolved;
+        }
+
+        let targetDirStats;
+        try {
+            targetDirStats = await fsPromises.stat(resolvedTargetDir);
+        } catch {
+            return res.status(404).json({ error: 'Destination folder not found' });
+        }
+        if (!targetDirStats.isDirectory()) {
+            return res.status(400).json({ error: 'Destination must be a folder' });
+        }
+
+        if (path.dirname(resolvedSource) === resolvedTargetDir) {
+            return res.status(400).json({ error: 'Item is already in this folder' });
+        }
+
+        // Moving a folder inside itself (or into one of its own descendants)
+        // would detach the subtree, so reject it before touching the disk.
+        if (sourceStats.isDirectory()) {
+            const sourcePrefix = resolvedSource + path.sep;
+            if (resolvedTargetDir === resolvedSource || resolvedTargetDir.startsWith(sourcePrefix)) {
+                return res.status(400).json({ error: 'Cannot move a folder into itself' });
+            }
+        }
+
+        const resolvedDestination = path.join(resolvedTargetDir, path.basename(resolvedSource));
+        const destinationValidation = validatePathInProject(projectRoot, resolvedDestination);
+        if (!destinationValidation.valid) {
+            return res.status(403).json({ error: destinationValidation.error });
+        }
+
+        try {
+            await fsPromises.access(resolvedDestination);
+            return res.status(409).json({ error: 'A file or directory with this name already exists in the destination' });
+        } catch {
+            // Doesn't exist, which is what we want
+        }
+
+        await fsPromises.rename(resolvedSource, resolvedDestination);
+
+        res.json({
+            success: true,
+            oldPath: resolvedSource,
+            newPath: resolvedDestination,
+            message: 'Moved successfully'
+        });
+    } catch (error) {
+        console.error('Error moving file/directory:', error);
+        if (error.code === 'EACCES') {
+            res.status(403).json({ error: 'Permission denied' });
+        } else if (error.code === 'ENOENT') {
+            res.status(404).json({ error: 'File or directory not found' });
+        } else if (error.code === 'EXDEV') {
+            res.status(400).json({ error: 'Cannot move across different filesystems' });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+    }
+});
+
 // DELETE /api/projects/:projectId/files - Delete file or directory
 app.delete('/api/projects/:projectId/files', authenticateToken, async (req, res) => {
     try {

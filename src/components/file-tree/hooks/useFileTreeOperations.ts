@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import JSZip from 'jszip';
 import { api } from '../../../utils/api';
+import { copyTextToClipboard } from '../../../utils/clipboard';
 import type { FileTreeNode } from '../types/types';
 import type { Project } from '../../../types/app';
 
@@ -17,6 +18,13 @@ export type ToastMessage = {
 export type DeleteConfirmation = {
   isOpen: boolean;
   item: FileTreeNode | null;
+};
+
+export type MoveDialogState = {
+  isOpen: boolean;
+  item: FileTreeNode | null;
+  /** Destination folder as an absolute path; empty until the user picks one. */
+  targetDir: string;
 };
 
 export type UseFileTreeOperationsOptions = {
@@ -40,6 +48,13 @@ export type UseFileTreeOperationsResult = {
   handleCancelDelete: () => void;
   handleConfirmDelete: () => Promise<void>;
 
+  // Move operations
+  moveDialog: MoveDialogState;
+  handleStartMove: (item: FileTreeNode) => void;
+  handleCancelMove: () => void;
+  handleConfirmMove: () => Promise<void>;
+  setMoveTargetDir: (targetDir: string) => void;
+
   // Create operations
   isCreating: boolean;
   newItemParent: string;
@@ -51,7 +66,7 @@ export type UseFileTreeOperationsResult = {
   setNewItemName: (name: string) => void;
 
   // Other operations
-  handleCopyPath: (item: FileTreeNode) => void;
+  handleCopyPath: (item: FileTreeNode) => Promise<void>;
   handleDownload: (item: FileTreeNode) => Promise<void>;
 
   // Loading state
@@ -74,6 +89,11 @@ export function useFileTreeOperations({
   const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmation>({
     isOpen: false,
     item: null,
+  });
+  const [moveDialog, setMoveDialog] = useState<MoveDialogState>({
+    isOpen: false,
+    item: null,
+    targetDir: '',
   });
   const [isCreating, setIsCreating] = useState(false);
   const [newItemParent, setNewItemParent] = useState('');
@@ -186,6 +206,52 @@ export function useFileTreeOperations({
     }
   }, [deleteConfirmation, selectedProject, showToast, t, onRefresh, handleCancelDelete]);
 
+  // Move operations
+  const handleStartMove = useCallback((item: FileTreeNode) => {
+    setMoveDialog({ isOpen: true, item, targetDir: '' });
+    setRenamingItem(null);
+    setIsCreating(false);
+  }, []);
+
+  const handleCancelMove = useCallback(() => {
+    setMoveDialog({ isOpen: false, item: null, targetDir: '' });
+  }, []);
+
+  const setMoveTargetDir = useCallback((targetDir: string) => {
+    setMoveDialog((current) => ({ ...current, targetDir }));
+  }, []);
+
+  const handleConfirmMove = useCallback(async () => {
+    const { item, targetDir } = moveDialog;
+    if (!item || !selectedProject) return;
+
+    setOperationLoading(true);
+    try {
+      const response = await api.moveFile(selectedProject.projectId, {
+        sourcePath: item.path,
+        targetDir,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to move');
+      }
+
+      showToast(
+        item.type === 'directory'
+          ? t('fileTree.toast.folderMoved', 'Folder moved')
+          : t('fileTree.toast.fileMoved', 'File moved'),
+        'success'
+      );
+      onRefresh();
+      handleCancelMove();
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setOperationLoading(false);
+    }
+  }, [moveDialog, selectedProject, showToast, t, onRefresh, handleCancelMove]);
+
   // Create operations
   const handleStartCreate = useCallback((parentPath: string, type: 'file' | 'directory') => {
     setNewItemParent(parentPath || '');
@@ -238,14 +304,18 @@ export function useFileTreeOperations({
     }
   }, [selectedProject, newItemParent, newItemType, newItemName, validateFilename, showToast, t, onRefresh, handleCancelCreate]);
 
-  // Copy path to clipboard
-  const handleCopyPath = useCallback((item: FileTreeNode) => {
-    navigator.clipboard.writeText(item.path).catch(() => {
-      // Clipboard API may fail in some contexts (e.g., non-HTTPS)
-      showToast(t('fileTree.toast.copyFailed', 'Failed to copy path'), 'error');
-      return;
-    });
-    showToast(t('fileTree.toast.pathCopied', 'Path copied to clipboard'), 'success');
+  // Copy path to clipboard. Goes through the shared helper because
+  // navigator.clipboard is undefined outside secure contexts (plain HTTP over
+  // LAN), where only the execCommand fallback works.
+  const handleCopyPath = useCallback(async (item: FileTreeNode) => {
+    const copied = await copyTextToClipboard(item.path);
+
+    showToast(
+      copied
+        ? t('fileTree.toast.pathCopied', 'Path copied to clipboard')
+        : t('fileTree.toast.copyFailed', 'Failed to copy path'),
+      copied ? 'success' : 'error',
+    );
   }, [showToast, t]);
 
   const triggerBrowserDownload = useCallback((blob: Blob, fileName: string) => {
@@ -352,6 +422,13 @@ export function useFileTreeOperations({
     handleStartDelete,
     handleCancelDelete,
     handleConfirmDelete,
+
+    // Move operations
+    moveDialog,
+    handleStartMove,
+    handleCancelMove,
+    handleConfirmMove,
+    setMoveTargetDir,
 
     // Create operations
     isCreating,

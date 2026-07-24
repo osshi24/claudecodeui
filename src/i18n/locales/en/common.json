@@ -123,6 +123,7 @@
     "collapseAll": "Collapse All",
     "context": {
       "rename": "Rename",
+      "move": "Move to...",
       "delete": "Delete",
       "copyPath": "Copy Path",
       "download": "Download",
@@ -131,6 +132,19 @@
       "refresh": "Refresh",
       "menuLabel": "File context menu",
       "loading": "Loading..."
+    },
+    "uploadFolder": "Upload folder (keeps structure)",
+    "move": {
+      "title": "Move to folder",
+      "confirm": "Move",
+      "projectRoot": "Project root",
+      "noDestinations": "There is no other folder to move this into."
+    },
+    "toast": {
+      "pathCopied": "Path copied to clipboard",
+      "copyFailed": "Failed to copy path",
+      "fileMoved": "File moved",
+      "folderMoved": "Folder moved"
     }
   },
   "projectWizard": {

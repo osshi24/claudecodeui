@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
-import { ChevronDown, Eye, FileText, FolderPlus, List, Loader2, RefreshCw, Search, TableProperties, Upload, X } from 'lucide-react';
+import { ChevronDown, Eye, FileText, FolderPlus, FolderUp, List, Loader2, RefreshCw, Search, TableProperties, Upload, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Input } from '../../../shared/view/ui';
@@ -43,6 +43,14 @@ export default function FileTreeHeader({
 }: FileTreeHeaderProps) {
   const { t } = useTranslation();
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const uploadFolderInputRef = useRef<HTMLInputElement | null>(null);
+
+  // webkitdirectory is what makes the picker select a whole folder, but React
+  // has no typing for it, so it is set on the DOM node directly.
+  const attachFolderInput = (node: HTMLInputElement | null) => {
+    uploadFolderInputRef.current = node;
+    node?.setAttribute('webkitdirectory', '');
+  };
 
   const handleUploadInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -100,6 +108,26 @@ export default function FileTreeHeader({
                     />
                   </span>
                 )}
+              </Button>
+              <input
+                ref={attachFolderInput}
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleUploadInputChange}
+                tabIndex={-1}
+                aria-hidden="true"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                onClick={() => uploadFolderInputRef.current?.click()}
+                title={t('fileTree.uploadFolder', 'Upload folder (keeps structure)')}
+                aria-label={t('fileTree.uploadFolder', 'Upload folder (keeps structure)')}
+                disabled={operationLoading || isUploading}
+              >
+                <FolderUp className="h-3.5 w-3.5" />
               </Button>
             </>
           )}

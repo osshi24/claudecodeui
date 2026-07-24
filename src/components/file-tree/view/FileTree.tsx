@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Check, X, Loader2, Folder, Upload } from 'lucide-react';
 
@@ -10,8 +10,9 @@ import { useFileTreeOperations } from '../hooks/useFileTreeOperations';
 import { useFileTreeSearch } from '../hooks/useFileTreeSearch';
 import { useFileTreeViewMode } from '../hooks/useFileTreeViewMode';
 import { useFileTreeUpload } from '../hooks/useFileTreeUpload';
+import { useFileTreeDragMove } from '../hooks/useFileTreeDragMove';
 import type { FileTreeImageSelection, FileTreeNode } from '../types/types';
-import { formatFileSize, formatRelativeTime, isImageFile } from '../utils/fileTreeUtils';
+import { formatFileSize, formatRelativeTime, getParentDirectory, isImageFile } from '../utils/fileTreeUtils';
 import { Project } from '../../../types/app';
 import { ScrollArea, Input } from '../../../shared/view/ui';
 
@@ -19,6 +20,7 @@ import FileTreeBody from './FileTreeBody';
 import FileTreeDetailedColumns from './FileTreeDetailedColumns';
 import FileTreeHeader from './FileTreeHeader';
 import FileTreeLoadingState from './FileTreeLoadingState';
+import FileTreeMoveDialog from './FileTreeMoveDialog';
 import FileTreeUploadProgress from './FileTreeUploadProgress';
 import ImageViewer from './ImageViewer';
 
@@ -69,7 +71,24 @@ export default function FileTree({ selectedProject, onFileOpen }: FileTreeProps)
     onRefresh: refreshFiles,
     showToast,
   });
-  const operationLoading = operations.operationLoading || upload.operationLoading;
+
+  // Project.path is optional on the API payload, so fall back to the parent of a
+  // top-level entry, which is the project directory by definition.
+  const projectRoot = useMemo(
+    () => selectedProject?.path ?? (files.length > 0 ? getParentDirectory(files[0].path) : ''),
+    [files, selectedProject?.path],
+  );
+
+  // Drag a node onto a folder to move it
+  const dragMove = useFileTreeDragMove({
+    selectedProject,
+    projectRoot,
+    onRefresh: refreshFiles,
+    showToast,
+  });
+
+  const operationLoading =
+    operations.operationLoading || upload.operationLoading || dragMove.isMoving;
 
   // Focus input when creating new item
   useEffect(() => {
@@ -165,7 +184,18 @@ export default function FileTree({ selectedProject, onFileOpen }: FileTreeProps)
 
       {viewMode === 'detailed' && filteredFiles.length > 0 && <FileTreeDetailedColumns />}
 
-      <ScrollArea className="flex-1 px-2 py-1">
+      {/* Dropping on the empty area around the rows moves to the project root.
+          Row handlers stop propagation, so this only fires outside them. */}
+      <ScrollArea
+        className={cn(
+          'flex-1 px-2 py-1',
+          dragMove.dropTargetDir === projectRoot &&
+            dragMove.draggedPath &&
+            'ring-1 ring-inset ring-primary/40',
+        )}
+        onDragOver={(event) => dragMove.handleDragOverTarget(null, event)}
+        onDrop={(event) => dragMove.handleDropOnTarget(null, event)}
+      >
         {/* New item input */}
         {operations.isCreating && (
           <div
@@ -209,12 +239,14 @@ export default function FileTree({ selectedProject, onFileOpen }: FileTreeProps)
           formatFileSize={formatFileSize}
           formatRelativeTime={formatRelativeTimeLabel}
           onRename={operations.handleStartRename}
+          onMove={operations.handleStartMove}
           onDelete={operations.handleStartDelete}
           onNewFile={(path) => operations.handleStartCreate(path, 'file')}
           onNewFolder={(path) => operations.handleStartCreate(path, 'directory')}
           onCopyPath={operations.handleCopyPath}
           onDownload={operations.handleDownload}
           onRefresh={refreshFiles}
+          dragMove={dragMove}
           // Pass rename state and handlers for inline editing
           renamingItem={operations.renamingItem}
           renameValue={operations.renameValue}
@@ -230,6 +262,20 @@ export default function FileTree({ selectedProject, onFileOpen }: FileTreeProps)
         <ImageViewer
           file={selectedImage}
           onClose={() => setSelectedImage(null)}
+        />
+      )}
+
+      {/* Move Dialog */}
+      {operations.moveDialog.isOpen && operations.moveDialog.item && selectedProject && (
+        <FileTreeMoveDialog
+          item={operations.moveDialog.item}
+          files={files}
+          projectRoot={projectRoot}
+          targetDir={operations.moveDialog.targetDir}
+          onTargetDirChange={operations.setMoveTargetDir}
+          onCancel={operations.handleCancelMove}
+          onConfirm={operations.handleConfirmMove}
+          isLoading={operationLoading}
         />
       )}
 

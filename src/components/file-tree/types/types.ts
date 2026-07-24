@@ -1,3 +1,4 @@
+import type { DragEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 export type FileTreeViewMode = 'simple' | 'compact' | 'detailed';
@@ -13,6 +14,16 @@ export interface FileTreeNode {
   permissionsRwx?: string;
   children?: FileTreeNode[];
   [key: string]: unknown;
+}
+
+/** Drag-to-move wiring handed down to every row. */
+export interface FileTreeDragMove {
+  draggedPath: string | null;
+  dropTargetDir: string | null;
+  handleDragStart: (item: FileTreeNode, event: DragEvent<HTMLElement>) => void;
+  handleDragEnd: () => void;
+  handleDragOverTarget: (target: FileTreeNode | null, event: DragEvent<HTMLElement>) => void;
+  handleDropOnTarget: (target: FileTreeNode | null, event: DragEvent<HTMLElement>) => void;
 }
 
 export interface FileTreeImageSelection {
