@@ -17,8 +17,11 @@ const startingPlugins = new Map();
  * child to bootstrap (Node itself, and any Python or CLI a plugin shells out
  * to). Without APPDATA a `pip install --user` tool cannot locate its
  * site-packages and fails to import; SystemRoot, PATHEXT and TEMP are needed to
- * resolve system DLLs, executable extensions and a temp directory. None of
- * these carry secrets, so the ones that are set get passed straight through.
+ * resolve system DLLs, executable extensions and a temp directory. On macOS and
+ * Linux, USER/LOGNAME identify the current user — the Claude CLI needs USER to
+ * locate the login Keychain that holds its OAuth token, so without it a shelled
+ * out `claude` reports "Not logged in". None of these carry secrets, so the ones
+ * that are set get passed straight through.
  */
 function buildPluginEnv(name) {
   const env = {
@@ -28,16 +31,21 @@ function buildPluginEnv(name) {
     PLUGIN_NAME: name,
   };
 
-  if (process.platform === 'win32') {
-    const WINDOWS_ESSENTIALS = [
-      'SystemRoot', 'windir', 'SystemDrive',
-      'USERPROFILE', 'APPDATA', 'LOCALAPPDATA',
-      'TEMP', 'TMP', 'PATHEXT',
-    ];
-    for (const key of WINDOWS_ESSENTIALS) {
-      if (process.env[key] !== undefined) {
-        env[key] = process.env[key];
-      }
+  const platformEssentials = process.platform === 'win32'
+    ? [
+        'SystemRoot', 'windir', 'SystemDrive',
+        'USERPROFILE', 'APPDATA', 'LOCALAPPDATA',
+        'TEMP', 'TMP', 'PATHEXT',
+      ]
+    : [
+        'USER', 'LOGNAME', 'SHELL', 'TMPDIR',
+        'LANG', 'LC_ALL', 'LC_CTYPE',
+        '__CF_USER_TEXT_ENCODING', 'SSH_AUTH_SOCK',
+      ];
+
+  for (const key of platformEssentials) {
+    if (process.env[key] !== undefined) {
+      env[key] = process.env[key];
     }
   }
 

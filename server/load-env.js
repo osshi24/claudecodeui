@@ -2,6 +2,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+
 import { findAppRoot, getModuleDir } from './utils/runtime-paths.js';
 
 const __dirname = getModuleDir(import.meta.url);
@@ -23,6 +24,27 @@ try {
   });
 } catch (e) {
   console.error('No .env file found or error reading it:', e.message);
+}
+
+// GUI-launched processes (desktop app, launchd/login items) get a minimal PATH that
+// hides CLI install dirs like /opt/homebrew/bin, so spawned shells and plugin servers
+// fail to find `claude` even though the user's terminal resolves it fine. Append the
+// well-known install locations that exist on this machine but are missing from PATH.
+const EXTRA_BIN_DIRS = [
+  '/opt/homebrew/bin',
+  '/usr/local/bin',
+  path.join(os.homedir(), '.local', 'bin'),
+  path.join(os.homedir(), '.npm-global', 'bin'),
+];
+
+if (process.platform !== 'win32') {
+  const pathEntries = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
+  const missingDirs = EXTRA_BIN_DIRS.filter(
+    dir => !pathEntries.includes(dir) && fs.existsSync(dir)
+  );
+  if (missingDirs.length > 0) {
+    process.env.PATH = [...pathEntries, ...missingDirs].join(path.delimiter);
+  }
 }
 
 // Keep the default database in a stable user-level location so rebuilding dist-server

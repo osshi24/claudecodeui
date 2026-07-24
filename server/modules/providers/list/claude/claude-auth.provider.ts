@@ -100,53 +100,95 @@ export class ClaudeProviderAuth implements IProviderAuth {
       return { authenticated: true, email: 'Configured via settings.json', method: 'api_key' };
     }
 
+    let fileError: string | null = null;
+    let creds: Record<string, unknown> | null = null;
+    let method = 'credentials_file';
+
     try {
       const credPath = path.join(os.homedir(), '.claude', '.credentials.json');
       const content = await readFile(credPath, 'utf8');
-      const creds = readObjectRecord(JSON.parse(content)) ?? {};
-      const oauth = readObjectRecord(creds.claudeAiOauth);
-      const accessToken = readOptionalString(oauth?.accessToken);
-
-      if (accessToken) {
-        const expiresAt = typeof oauth?.expiresAt === 'number' ? oauth.expiresAt : undefined;
-        const email = readOptionalString(creds.email) ?? readOptionalString(creds.user) ?? null;
-        if (!expiresAt || Date.now() < expiresAt) {
-          return {
-            authenticated: true,
-            email,
-            method: 'credentials_file',
-          };
-        }
-
-        return {
-          authenticated: false,
-          email: null,
-          method: null,
-          error: 'Claude login has expired. Run claude /login again.',
-        };
-      }
-
-      return {
-        authenticated: false,
-        email: null,
-        method: null,
-        error: missingCredentialsError,
-      };
+      creds = readObjectRecord(JSON.parse(content)) ?? {};
     } catch (error) {
-      let errorMessage = 'Unable to read Claude credentials. Run claude /login again.';
-
       if (hasErrorCode(error, 'ENOENT')) {
-        errorMessage = missingCredentialsError;
+        fileError = missingCredentialsError;
       } else if (error instanceof SyntaxError) {
-        errorMessage = 'Claude credentials are unreadable. Run claude /login again.';
+        fileError = 'Claude credentials are unreadable. Run claude /login again.';
+      } else {
+        fileError = 'Unable to read Claude credentials. Run claude /login again.';
       }
+    }
 
+    if (!readOptionalString(readObjectRecord(creds?.claudeAiOauth)?.accessToken)) {
+      const keychainCreds = this.readKeychainCredentials();
+      if (keychainCreds) {
+        creds = keychainCreds;
+        method = 'keychain';
+      }
+    }
+
+    if (!creds) {
       return {
         authenticated: false,
         email: null,
         method: null,
-        error: errorMessage,
+        error: fileError ?? missingCredentialsError,
       };
+    }
+
+    const oauth = readObjectRecord(creds.claudeAiOauth);
+    const accessToken = readOptionalString(oauth?.accessToken);
+
+    if (!accessToken) {
+      return {
+        authenticated: false,
+        email: null,
+        method: null,
+        error: fileError ?? missingCredentialsError,
+      };
+    }
+
+    const expiresAt = typeof oauth?.expiresAt === 'number' ? oauth.expiresAt : undefined;
+    const email = readOptionalString(creds.email) ?? readOptionalString(creds.user) ?? null;
+
+    if (!expiresAt || Date.now() < expiresAt) {
+      return {
+        authenticated: true,
+        email,
+        method,
+      };
+    }
+
+    return {
+      authenticated: false,
+      email: null,
+      method: null,
+      error: 'Claude login has expired. Run claude /login again.',
+    };
+  }
+
+  /**
+   * On macOS, Claude Code stores OAuth credentials in the login Keychain
+   * ("Claude Code-credentials" item) instead of ~/.claude/.credentials.json.
+   */
+  private readKeychainCredentials(): Record<string, unknown> | null {
+    if (process.platform !== 'darwin') {
+      return null;
+    }
+
+    try {
+      const result = spawn.sync(
+        'security',
+        ['find-generic-password', '-w', '-s', 'Claude Code-credentials'],
+        { encoding: 'utf8', timeout: 5000 },
+      );
+
+      if (result.status !== 0 || !result.stdout?.trim()) {
+        return null;
+      }
+
+      return readObjectRecord(JSON.parse(result.stdout.trim()));
+    } catch {
+      return null;
     }
   }
 }
