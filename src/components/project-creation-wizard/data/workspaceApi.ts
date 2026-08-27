@@ -85,6 +85,7 @@ export const browseFilesystemFolders = async (pathToBrowse: string) => {
 
   return {
     path: data.path || pathToBrowse,
+    workspaceRoot: data.workspaceRoot ?? null,
     suggestions: (data.suggestions || []) as FolderSuggestion[],
   };
 };

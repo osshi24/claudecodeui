@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { getConnection } from '@/modules/database/connection.js';
 import type { CreateProjectPathResult, ProjectRepositoryRow } from '@/shared/types.js';
-import { normalizeProjectPath } from '@/shared/utils.js';
+import { isWithinWorkspacesRoot, normalizeProjectPath } from '@/shared/utils.js';
 
 function normalizeProjectDisplayName(projectPath: string, customProjectName: string | null): string {
     const trimmedCustomName = typeof customProjectName === 'string' ? customProjectName.trim() : '';
@@ -64,7 +64,11 @@ export const projectsDb = {
             WHERE project_id = ?
         `).get(projectId) as ProjectRepositoryRow | undefined;
 
-        return row ?? null;
+        if (!row || !isWithinWorkspacesRoot(row.project_path)) {
+            return null;
+        }
+
+        return row;
     },
 
     /**
@@ -83,16 +87,22 @@ export const projectsDb = {
             WHERE project_id = ?
         `).get(projectId) as Pick<ProjectRepositoryRow, 'project_path'> | undefined;
 
-        return row?.project_path ?? null;
+        if (!row || !isWithinWorkspacesRoot(row.project_path)) {
+            return null;
+        }
+
+        return row.project_path;
     },
 
     getProjectPaths(): ProjectRepositoryRow[] {
         const db = getConnection();
-        return db.prepare(`
+        const rows = db.prepare(`
             SELECT project_id, project_path, custom_project_name, isStarred, isArchived
             FROM projects
             WHERE isArchived = 0
         `).all() as ProjectRepositoryRow[];
+
+        return rows.filter((row) => isWithinWorkspacesRoot(row.project_path));
     },
 
     /**
@@ -101,11 +111,13 @@ export const projectsDb = {
      */
     getArchivedProjectPaths(): ProjectRepositoryRow[] {
         const db = getConnection();
-        return db.prepare(`
+        const rows = db.prepare(`
             SELECT project_id, project_path, custom_project_name, isStarred, isArchived
             FROM projects
             WHERE isArchived = 1
         `).all() as ProjectRepositoryRow[];
+
+        return rows.filter((row) => isWithinWorkspacesRoot(row.project_path));
     },
 
     getCustomProjectName(projectPath: string): string | null {

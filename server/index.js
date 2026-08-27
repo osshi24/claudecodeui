@@ -362,7 +362,7 @@ app.get('/api/browse-filesystem', authenticateToken, async (req, res) => {
         }
 
         // Use existing getFileTree function with shallow depth (only direct children)
-        const fileTree = await getFileTree(resolvedPath, 1, 0, false); // maxDepth=1, showHidden=false
+        const fileTree = await getFileTree(resolvedPath, 1, 0, false); // maxDepth=1, no dotted folders
 
         // Filter only directories and format for suggestions
         const directories = fileTree
@@ -400,6 +400,9 @@ app.get('/api/browse-filesystem', authenticateToken, async (req, res) => {
 
         res.json({
             path: resolvedPath,
+            // The client needs the ceiling to know when to stop offering a
+            // "go up" affordance, otherwise it links to a 403.
+            workspaceRoot: resolvedWorkspaceRoot,
             suggestions: suggestions
         });
 
@@ -619,7 +622,7 @@ app.get('/api/projects/:projectId/files', authenticateToken, async (req, res) =>
             return res.status(404).json({ error: `Project path not found: ${actualPath}` });
         }
 
-        const files = await getFileTree(actualPath, 10, 0, true);
+        const files = await getFileTree(actualPath, 10, 0, false);
         res.json(files);
     } catch (error) {
         console.error('[ERROR] File tree error:', error.message);
@@ -1555,7 +1558,7 @@ function release() {
     activeFsOperations = Math.max(0, activeFsOperations - 1);
 }
 
-async function getFileTree(dirPath, maxDepth = 3, currentDepth = 0, showHidden = true) {
+async function getFileTree(dirPath, maxDepth = 3, currentDepth = 0, showHiddenDirectories = true) {
     // Using fsPromises from import
     let entries;
     try {
@@ -1573,7 +1576,17 @@ async function getFileTree(dirPath, maxDepth = 3, currentDepth = 0, showHidden =
         return [];
     }
 
-    const filteredEntries = entries.filter((entry) => !(entry.isDirectory() && IGNORED_DIRS.has(entry.name)));
+    const filteredEntries = entries.filter((entry) => {
+        if (!entry.isDirectory()) {
+            return true;
+        }
+        if (IGNORED_DIRS.has(entry.name)) {
+            return false;
+        }
+        // Dotted directories (.claude, .husky, .github, ...) are noise in the
+        // tree. Dot-files stay visible: .env and .gitignore are edited often.
+        return showHiddenDirectories || !entry.name.startsWith('.');
+    });
 
     // Process every entry in parallel. On high-latency filesystems (NFS/SMB)
     // serial stat() was the real bottleneck — issuing them concurrently lets
@@ -1630,7 +1643,7 @@ async function getFileTree(dirPath, maxDepth = 3, currentDepth = 0, showHidden =
             // The recursive call starts with a bounded readdir; holding a permit
             // for the whole subtree can deadlock when sibling directories are
             // waiting on their own children.
-            item.children = await getFileTree(itemPath, maxDepth, currentDepth + 1, showHidden);
+            item.children = await getFileTree(itemPath, maxDepth, currentDepth + 1, showHiddenDirectories);
         }
 
         return item;

@@ -21,6 +21,7 @@ export type CredentialsResponse = {
 
 export type BrowseFilesystemResponse = {
   path?: string;
+  workspaceRoot?: string;
   suggestions?: FolderSuggestion[];
   error?: string;
 };

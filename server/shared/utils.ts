@@ -204,6 +204,39 @@ export function normalizeProjectPath(inputPath: string): string {
 }
 
 /**
+ * Reports whether an already-stored project path still belongs to the
+ * configured workspace root.
+ *
+ * This is the read-side counterpart to `validateWorkspacePath`: that function
+ * guards path creation, while this one filters rows the database already holds
+ * so projects outside the root disappear from listings and can no longer be
+ * resolved by id. Nothing is deleted — unset `WORKSPACES_ROOT` and every row
+ * becomes visible again.
+ *
+ * `process.env.WORKSPACES_ROOT` is read on each call rather than reusing the
+ * `WORKSPACES_ROOT` constant so the check stays opt-in: with no root configured
+ * every path is allowed, which keeps the default single-user setup (and tests
+ * that register fixture paths) behaving exactly as before.
+ */
+export function isWithinWorkspacesRoot(projectPath: string): boolean {
+  const configuredRoot = process.env.WORKSPACES_ROOT;
+  if (!configuredRoot) {
+    return true;
+  }
+
+  const normalizedRoot = normalizeProjectPath(configuredRoot);
+  const normalizedTarget = normalizeProjectPath(projectPath);
+  if (!normalizedRoot || !normalizedTarget) {
+    return false;
+  }
+
+  return (
+    normalizedTarget === normalizedRoot
+    || normalizedTarget.startsWith(`${normalizedRoot}${path.sep}`)
+  );
+}
+
+/**
  * Validates that a user-supplied workspace path is safe to use.
  *
  * Call this before any filesystem mutation that creates or registers projects.

@@ -19,6 +19,7 @@ export default function FolderBrowserModal({
   onFolderSelected,
 }: FolderBrowserModalProps) {
   const [currentPath, setCurrentPath] = useState('~');
+  const [workspaceRoot, setWorkspaceRoot] = useState<string | null>(null);
   const [folders, setFolders] = useState<FolderSuggestion[]>([]);
   const [loadingFolders, setLoadingFolders] = useState(false);
   const [showHiddenFolders, setShowHiddenFolders] = useState(false);
@@ -34,6 +35,7 @@ export default function FolderBrowserModal({
     try {
       const result = await browseFilesystemFolders(pathToLoad);
       setCurrentPath(result.path);
+      setWorkspaceRoot(result.workspaceRoot);
       setFolders(result.suggestions);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Failed to load folders');
@@ -90,7 +92,10 @@ export default function FolderBrowserModal({
     }
   }, [currentPath, loadFolders, newFolderName]);
 
-  const parentPath = getParentPath(currentPath);
+  // Browsing above the workspace root is rejected by the server, so don't
+  // offer the step up at all once we are sitting on it.
+  const isAtWorkspaceRoot = workspaceRoot !== null && currentPath === workspaceRoot;
+  const parentPath = isAtWorkspaceRoot ? null : getParentPath(currentPath);
 
   if (!isOpen) {
     return null;
