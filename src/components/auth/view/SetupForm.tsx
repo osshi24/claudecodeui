@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Lock, ShieldCheck, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AuthErrorAlert from './AuthErrorAlert';
@@ -43,14 +44,24 @@ function validateSetupForm(formState: SetupFormState): string | null {
   return null;
 }
 
+type SetupFormProps = {
+  /**
+   * Present only when this is an extra account rather than first-run setup,
+   * so the user can get back to the login screen without reloading.
+   */
+  onBackToLogin?: () => void;
+};
+
 /**
  * Account setup / registration form.
  * Uses `autoComplete="new-password"` on password fields so that password
  * managers recognise this as a registration flow and offer to save the new
  * credentials after submission.
  */
-export default function SetupForm() {
+export default function SetupForm({ onBackToLogin }: SetupFormProps) {
+  const { t } = useTranslation('auth');
   const { register } = useAuth();
+  const isAdditionalAccount = Boolean(onBackToLogin);
 
   const [formState, setFormState] = useState<SetupFormState>(initialState);
   const [errorMessage, setErrorMessage] = useState('');
@@ -83,9 +94,17 @@ export default function SetupForm() {
 
   return (
     <AuthScreenLayout
-      title="Welcome to CloudCLI"
-      description="Set up your account to get started"
-      footerText="This is a single-user system. Only one account can be created."
+      title={isAdditionalAccount ? 'Create Another Account' : 'Welcome to CloudCLI'}
+      description={
+        isAdditionalAccount
+          ? 'Add another account to this CloudCLI instance'
+          : 'Set up your account to get started'
+      }
+      footerText={
+        isAdditionalAccount
+          ? 'All accounts share the same projects and sessions.'
+          : 'Set up the first account for this CloudCLI instance.'
+      }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthInputField
@@ -147,6 +166,17 @@ export default function SetupForm() {
             'Create Account'
           )}
         </button>
+
+        {onBackToLogin ? (
+          <button
+            type="button"
+            onClick={onBackToLogin}
+            disabled={isSubmitting}
+            className="w-full rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {t('login.submit')}
+          </button>
+        ) : null}
       </form>
     </AuthScreenLayout>
   );

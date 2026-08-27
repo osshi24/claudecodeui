@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { IS_PLATFORM } from '../../../constants/config';
 import { useAuth } from '../context/AuthContext';
@@ -11,7 +12,15 @@ type ProtectedRouteProps = {
 };
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, isLoading, needsSetup, hasCompletedOnboarding, refreshOnboardingStatus } = useAuth();
+  const {
+    user,
+    isLoading,
+    needsSetup,
+    allowRegistration,
+    hasCompletedOnboarding,
+    refreshOnboardingStatus,
+  } = useAuth();
+  const [isRegistering, setIsRegistering] = useState(false);
 
   if (isLoading) {
     return <AuthLoadingScreen />;
@@ -25,12 +34,21 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <>{children}</>;
   }
 
+  // No account yet: this is first-run setup, not an optional signup.
   if (needsSetup) {
     return <SetupForm />;
   }
 
   if (!user) {
-    return <LoginForm />;
+    if (isRegistering) {
+      return <SetupForm onBackToLogin={() => setIsRegistering(false)} />;
+    }
+
+    return (
+      <LoginForm
+        onCreateAccount={allowRegistration ? () => setIsRegistering(true) : undefined}
+      />
+    );
   }
 
   if (!hasCompletedOnboarding) {

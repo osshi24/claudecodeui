@@ -17,12 +17,17 @@ const initialState: LoginFormState = {
   password: '',
 };
 
+type LoginFormProps = {
+  /** Omitted when the server has registration closed, which hides the link. */
+  onCreateAccount?: () => void;
+};
+
 /**
  * Login form component.
  * Handles credential input with browser autofill support (`autocomplete`
  * attributes) so that password managers can offer to fill saved credentials.
  */
-export default function LoginForm() {
+export default function LoginForm({ onCreateAccount }: LoginFormProps) {
   const { t } = useTranslation('auth');
   const { login } = useAuth();
 
@@ -101,6 +106,17 @@ export default function LoginForm() {
             t('login.submit')
           )}
         </button>
+
+        {onCreateAccount ? (
+          <button
+            type="button"
+            onClick={onCreateAccount}
+            disabled={isSubmitting}
+            className="w-full rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {t('register.title')}
+          </button>
+        ) : null}
       </form>
     </AuthScreenLayout>
   );

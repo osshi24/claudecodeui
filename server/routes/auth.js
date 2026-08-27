@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { userDb } from '../modules/database/index.js';
 import { getConnection } from '../modules/database/connection.js';
 import { generateToken, authenticateToken } from '../middleware/auth.js';
+import { ALLOW_REGISTRATION } from '../constants/config.js';
 
 const router = express.Router();
 const db = getConnection();
@@ -13,6 +14,8 @@ router.get('/status', async (req, res) => {
     const hasUsers = await userDb.hasUsers();
     res.json({ 
       needsSetup: !hasUsers,
+      // Drives whether the login screen offers a "create account" link.
+      allowRegistration: ALLOW_REGISTRATION,
       isAuthenticated: false // Will be overridden by frontend if token exists
     });
   } catch (error) {
@@ -21,7 +24,8 @@ router.get('/status', async (req, res) => {
   }
 });
 
-// User registration (setup) - only allowed if no users exist
+// User registration. The first account is always allowed (initial setup);
+// additional accounts require ALLOW_REGISTRATION.
 router.post('/register', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -38,11 +42,12 @@ router.post('/register', async (req, res) => {
     // Use a transaction to prevent race conditions
     db.prepare('BEGIN').run();
     try {
-      // Check if users already exist (only allow one user)
+      // The check stays inside the transaction so two concurrent first-time
+      // registrations cannot both pass it.
       const hasUsers = userDb.hasUsers();
-      if (hasUsers) {
+      if (hasUsers && !ALLOW_REGISTRATION) {
         db.prepare('ROLLBACK').run();
-        return res.status(403).json({ error: 'User already exists. This is a single-user system.' });
+        return res.status(403).json({ error: 'Registration is closed. Set ALLOW_REGISTRATION=true to allow additional accounts.' });
       }
       
       // Hash password
