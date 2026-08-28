@@ -1,19 +1,14 @@
 import { Settings, AlertTriangle } from 'lucide-react';
 import type { TFunction } from 'i18next';
-import { IS_PLATFORM } from '../../../../constants/config';
-
-const GITHUB_REPO_URL = 'https://github.com/siteboon/claudecodeui';
 
 type SidebarFooterProps = {
   restartRequired: boolean;
-  currentVersion: string;
   onShowSettings: () => void;
   t: TFunction;
 };
 
 export default function SidebarFooter({
   restartRequired,
-  currentVersion,
   onShowSettings,
   t,
 }: SidebarFooterProps) {
@@ -48,20 +43,6 @@ export default function SidebarFooter({
           <span className="text-sm">{t('actions.settings')}</span>
         </button>
       </div>
-
-      {/* Desktop version brand line (OSS mode only) */}
-      {!IS_PLATFORM && (
-        <div className="hidden px-3 py-2 text-center md:block">
-          <a
-            href={GITHUB_REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] text-muted-foreground/40 transition-colors hover:text-muted-foreground"
-          >
-            MangoAds v{currentVersion} – {t('branding.openSource')}
-          </a>
-        </div>
-      )}
 
       {/* Mobile settings */}
       <div className="px-3 pb-3 pt-2 md:hidden">

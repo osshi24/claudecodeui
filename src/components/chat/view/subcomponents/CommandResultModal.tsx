@@ -8,7 +8,6 @@ import {
   Gauge,
   Package,
   Search,
-  Server,
   Sparkles,
   TerminalSquare,
   Timer,
@@ -404,8 +403,6 @@ function ModelsContent({
 function CostContent({ data }: { data: CostCommandData }) {
   const used = Number(data.tokenUsage?.used ?? 0);
   const total = Number(data.tokenUsage?.total ?? 0);
-  const model = data.model || 'Unknown';
-  const provider = getProviderLabel(data.provider, data.provider || 'Unknown');
   const hasBreakdown =
     typeof data.tokenBreakdown?.input === 'number' ||
     typeof data.tokenBreakdown?.output === 'number';
@@ -458,19 +455,6 @@ function CostContent({ data }: { data: CostCommandData }) {
           );
         })}
       </div>
-
-      <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Provider</p>
-            <p className="mt-1 text-sm font-semibold text-foreground">{provider}</p>
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Model</p>
-            <p className="mt-1 break-all font-mono text-sm text-foreground">{model}</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -481,8 +465,6 @@ function StatusContent({ data }: { data: StatusCommandData }) {
     { label: 'Package', value: data.packageName || 'claude-code-ui', icon: Package },
     { label: 'Version', value: data.version || 'Unknown', icon: BadgeCheck, tone: 'success' as const },
     { label: 'Uptime', value: data.uptime || 'Unknown', icon: Timer },
-    { label: 'Provider', value: getProviderLabel(data.provider, data.provider || 'Unknown'), icon: Server, tone: 'primary' as const },
-    { label: 'Model', value: data.model || 'Unknown', icon: Cpu },
     { label: 'Node.js', value: data.nodeVersion || 'Unknown', icon: TerminalSquare },
     { label: 'Platform', value: data.platform || 'Unknown', icon: Activity },
     { label: 'Memory', value: typeof memoryRssMb === 'number' ? `${memoryRssMb} MB RSS` : 'Unknown', icon: Gauge },

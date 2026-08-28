@@ -142,7 +142,13 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, s
                 </div>
               ) : (
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full p-1 text-sm text-foreground">
-                  <SessionProviderLogo provider={provider} className="h-full w-full" />
+                  {provider === 'claude' ? (
+                    // The app brands its own assistant; other providers keep
+                    // their own mark so old Codex/Cursor turns stay readable.
+                    <img src="/logo.svg" alt="" className="h-full w-full rounded" />
+                  ) : (
+                    <SessionProviderLogo provider={provider} className="h-full w-full" />
+                  )}
                 </div>
               )}
               <div className="text-sm font-medium text-gray-900 dark:text-white">

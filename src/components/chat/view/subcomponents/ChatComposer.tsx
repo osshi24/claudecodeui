@@ -419,7 +419,7 @@ export default function ChatComposer({
         <PromptInputFooter>
           <PromptInputTools>
             <PromptInputButton
-              tooltip={{ content: t('input.attachImages') }}
+              tooltip={{ content: t('input.attachFiles') }}
               onClick={openImagePicker}
             >
               <ImageIcon />

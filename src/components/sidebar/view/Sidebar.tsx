@@ -297,7 +297,6 @@ function Sidebar({
             onCreateProject={() => setShowNewProject(true)}
             onCollapseSidebar={handleCollapseSidebar}
             restartRequired={restartRequired}
-            currentVersion={currentVersion}
             onShowSettings={onShowSettings}
             projectListProps={projectListProps}
             t={t}

@@ -140,7 +140,6 @@ type SidebarContentProps = {
   onCreateProject: () => void;
   onCollapseSidebar: () => void;
   restartRequired: boolean;
-  currentVersion: string;
   onShowSettings: () => void;
   projectListProps: SidebarProjectListProps;
   t: TFunction;
@@ -174,7 +173,6 @@ export default function SidebarContent({
   onCreateProject,
   onCollapseSidebar,
   restartRequired,
-  currentVersion,
   onShowSettings,
   projectListProps,
   t,
@@ -546,7 +544,6 @@ export default function SidebarContent({
 
       <SidebarFooter
         restartRequired={restartRequired}
-        currentVersion={currentVersion}
         onShowSettings={onShowSettings}
         t={t}
       />

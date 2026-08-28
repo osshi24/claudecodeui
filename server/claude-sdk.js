@@ -13,7 +13,7 @@
  */
 
 import crypto from 'crypto';
-import { promises as fs } from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import os from 'os';
 import path from 'path';
 
@@ -23,6 +23,7 @@ import { buildClaudeUserContent, normalizeImageDescriptors } from './shared/imag
 import { CLAUDE_FALLBACK_MODELS } from './modules/providers/list/claude/claude-models.provider.js';
 import { providerModelsService } from './modules/providers/services/provider-models.service.js';
 import { resolveClaudeCodeExecutablePath } from './shared/claude-cli-path.js';
+import { findAppRoot, getModuleDir } from './utils/runtime-paths.js';
 import {
   createNotificationEvent,
   notifyRunFailed,
@@ -157,6 +158,30 @@ function matchesToolPermission(entry, toolName, input) {
   return false;
 }
 
+/**
+ * Project-level instructions appended to Claude Code's own system prompt.
+ *
+ * Lives at the app root next to `.env` rather than under `server/`, because
+ * `npm run build` compiles TypeScript only — a markdown file inside `server/`
+ * would not exist in `dist-server/` and the append would silently vanish in
+ * production builds.
+ *
+ * Read per request so edits apply without restarting the server; the file is a
+ * couple of kilobytes and this runs once per user message, not per token.
+ */
+const SYSTEM_PROMPT_PATH = path.join(findAppRoot(getModuleDir(import.meta.url)), 'system-prompt.md');
+
+function readSystemPromptAppend() {
+  try {
+    return readFileSync(SYSTEM_PROMPT_PATH, 'utf8').trim() || null;
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.warn('[Claude] Could not read system-prompt.md:', error.message);
+    }
+    return null;
+  }
+}
+
 function mapCliOptionsToSDK(options = {}) {
   const { sessionId, cwd, toolsSettings, permissionMode, effort } = options;
 
@@ -219,10 +244,19 @@ function mapCliOptionsToSDK(options = {}) {
     sdkOptions.effort = resolvedEffort;
   }
 
+  // Keep Claude Code's preset — it carries the tool-use instructions — and add
+  // the project's own rules on top rather than replacing it.
+  const systemPromptAppend = readSystemPromptAppend();
   sdkOptions.systemPrompt = {
     type: 'preset',
-    preset: 'claude_code'
+    preset: 'claude_code',
+    ...(systemPromptAppend ? { append: systemPromptAppend } : {}),
   };
+
+  // Emit partial assistant messages so text appears as it is generated instead
+  // of landing in one block. The client already handles `stream_delta` (the
+  // store dedupes the trailing complete message against the streamed text).
+  sdkOptions.includePartialMessages = true;
 
   sdkOptions.settingSources = ['project', 'user', 'local'];
 
@@ -279,6 +313,16 @@ function getAllSessions() {
  * @returns {Object} Transformed message ready for WebSocket
  */
 function transformMessage(sdkMessage) {
+  // Token-level streaming arrives wrapped: { type: 'stream_event', event: <raw
+  // Anthropic stream event> }. The Claude adapter matches on the raw event's
+  // own `type` (content_block_delta / content_block_stop), so unwrap it here or
+  // every delta is silently dropped.
+  if (sdkMessage?.type === 'stream_event' && sdkMessage.event) {
+    return sdkMessage.parent_tool_use_id
+      ? { ...sdkMessage.event, parentToolUseId: sdkMessage.parent_tool_use_id }
+      : sdkMessage.event;
+  }
+
   // Extract parent_tool_use_id for subagent tool grouping
   if (sdkMessage.parent_tool_use_id) {
     return {
@@ -823,6 +867,9 @@ function reconnectSessionWriter(sessionId, newRawWs) {
 
 // Export public API
 export {
+  // Exported for tests: assert SDK option wiring and stream-event unwrapping.
+  mapCliOptionsToSDK,
+  transformMessage,
   queryClaudeSDK,
   abortClaudeSDKSession,
   isClaudeSDKSessionActive,

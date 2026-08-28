@@ -331,7 +331,9 @@ const removeSessionFromProject = (project: Project, sessionIdToDelete: string): 
   return updatedProject;
 };
 
-const VALID_TABS: Set<string> = new Set(['chat', 'files', 'shell', 'git', 'tasks', 'browser']);
+// 'shell' and 'git' are intentionally absent: the tab bar no longer offers
+// them, so a stored value pointing at one falls back to 'chat'.
+const VALID_TABS: Set<string> = new Set(['chat', 'files', 'tasks', 'browser']);
 
 const isValidTab = (tab: string): tab is AppTab => {
   return VALID_TABS.has(tab) || tab.startsWith('plugin:');
