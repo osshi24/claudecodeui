@@ -113,6 +113,16 @@ export class AppError extends Error {
 export const WORKSPACES_ROOT = process.env.WORKSPACES_ROOT || os.homedir();
 
 /**
+ * The Claude model every new session runs on.
+ *
+ * The in-app model picker is hidden, so this environment variable is the only
+ * way to change it. The Claude provider validates the value against its own
+ * option list and falls back to Fable when it does not match, so a typo fails
+ * loudly at startup instead of being rejected by the SDK mid-conversation.
+ */
+export const CLAUDE_DEFAULT_MODEL = process.env.CLAUDE_DEFAULT_MODEL?.trim() || 'fable';
+
+/**
  * System-critical paths that must never be used as workspace roots.
  *
  * The validation helper blocks these values directly and also blocks paths

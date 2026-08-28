@@ -86,7 +86,7 @@
     "openInEditor": "Mở trong trình soạn thảo"
   },
   "mainContent": {
-    "loading": "Đang tải CloudCLI",
+    "loading": "Đang tải MangoAds",
     "settingUpWorkspace": "Đang thiết lập không gian làm việc của bạn...",
     "chooseProject": "Chọn dự án của bạn",
     "selectProjectDescription": "Chọn một dự án từ thanh bên để bắt đầu lập trình cùng Claude. Mỗi dự án chứa các phiên trò chuyện và lịch sử tệp của bạn.",

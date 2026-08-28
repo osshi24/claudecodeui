@@ -7,7 +7,6 @@ import { cn } from '../../../../lib/utils';
 import type { Project, ProjectSession, LLMProvider } from '../../../../types/app';
 import type { SessionWithProvider } from '../../types/types';
 import { createSessionViewModel } from '../../utils/utils';
-import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
 
 type SidebarSessionItemProps = {
   project: Project;
@@ -159,15 +158,6 @@ export default function SidebarSessionItem({
           onClick={selectMobileSession}
         >
           <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                'w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0',
-                isSelected ? 'bg-primary/10' : 'bg-muted/50',
-              )}
-            >
-              <SessionProviderLogo provider={session.__provider} className="h-3 w-3" />
-            </div>
-
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1 truncate text-sm font-normal text-foreground">{sessionView.sessionName}</div>
@@ -229,14 +219,6 @@ export default function SidebarSessionItem({
           }}
         >
           <div className="flex w-full min-w-0 items-center gap-2">
-            <div
-              className={cn(
-                'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md',
-                isSelected ? 'bg-primary/10' : 'bg-muted/50',
-              )}
-            >
-              <SessionProviderLogo provider={session.__provider} className="h-3 w-3" />
-            </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1 truncate text-sm font-normal text-foreground">{sessionView.sessionName}</div>

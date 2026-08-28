@@ -449,7 +449,6 @@ function ChatInterface({
                     : t('messageTypes.claude'),
           })}
           isTextareaExpanded={isTextareaExpanded}
-          sendByCtrlEnter={sendByCtrlEnter}
         />
         </div>
       </div>

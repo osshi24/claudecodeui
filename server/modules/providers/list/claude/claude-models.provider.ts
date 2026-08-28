@@ -10,6 +10,7 @@ import type {
   ProviderSessionActiveModelChange,
 } from '@/shared/types.js';
 import {
+  CLAUDE_DEFAULT_MODEL,
   buildDefaultProviderCurrentActiveModel,
   writeProviderSessionActiveModelChange,
 } from '@/shared/utils.js';
@@ -109,8 +110,23 @@ export const CLAUDE_FALLBACK_MODELS: ProviderModelsDefinition = {
       description: 'Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok',
     },
   ],
-  DEFAULT: 'default',
+  DEFAULT: 'fable',
 };
+
+// Applied after the literal above so the validation can see OPTIONS.
+const configuredDefault = CLAUDE_FALLBACK_MODELS.OPTIONS.some(
+  (option) => option.value === CLAUDE_DEFAULT_MODEL,
+)
+  ? CLAUDE_DEFAULT_MODEL
+  : null;
+
+if (!configuredDefault && CLAUDE_DEFAULT_MODEL !== 'fable') {
+  console.warn(
+    `[Claude] Ignoring CLAUDE_DEFAULT_MODEL="${CLAUDE_DEFAULT_MODEL}" — not a known model. Using "fable".`,
+  );
+}
+
+CLAUDE_FALLBACK_MODELS.DEFAULT = configuredDefault ?? 'fable';
 
 export const findClaudeModelOption = (model: string | undefined | null): ProviderModelOption | null => {
   const normalizedModel = typeof model === 'string' ? model.trim() : '';

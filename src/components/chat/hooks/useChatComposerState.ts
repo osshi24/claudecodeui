@@ -146,6 +146,9 @@ export type CommandModalPayload = {
   data: HelpCommandData | ModelCommandData | CostCommandData | StatusCommandData;
 };
 
+/** Attachments allowed on one message; mirrors the server upload cap. */
+const MAX_ATTACHMENTS = 20;
+
 const createFakeSubmitEvent = () => {
   return { preventDefault: () => undefined } as unknown as FormEvent<HTMLFormElement>;
 };
@@ -521,17 +524,7 @@ export function useChatComposerState({
           return false;
         }
 
-        if (!file.type || !file.type.startsWith('image/')) {
-          return false;
-        }
-
-        if (!file.size || file.size > 5 * 1024 * 1024) {
-          const fileName = file.name || 'Unknown file';
-          setImageErrors((previous) => {
-            const next = new Map(previous);
-            next.set(fileName, 'File too large (max 5MB)');
-            return next;
-          });
+        if (!file.size) {
           return false;
         }
 
@@ -543,7 +536,7 @@ export function useChatComposerState({
     });
 
     if (validFiles.length > 0) {
-      setAttachedImages((previous) => [...previous, ...validFiles].slice(0, 5));
+      setAttachedImages((previous) => [...previous, ...validFiles].slice(0, MAX_ATTACHMENTS));
     }
   }, []);
 
@@ -573,11 +566,10 @@ export function useChatComposerState({
   );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'],
-    },
-    maxSize: 5 * 1024 * 1024,
-    maxFiles: 5,
+    // No `accept` and no `maxSize`: the composer takes any file. Images become
+    // image content; anything else reaches the agent as a path it can open, so
+    // there is nothing to cap on size. Only the count is bounded.
+    maxFiles: MAX_ATTACHMENTS,
     onDrop: handleImageFiles,
     noClick: true,
     noKeyboard: true,

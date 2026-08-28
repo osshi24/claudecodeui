@@ -163,6 +163,54 @@ export type ParsedImagesInput = {
  * to read the files and keep the block out of the reply. The same block is
  * stripped back out of persisted history by {@link parseImagesInputTag}.
  */
+/**
+ * Splits a mixed attachment list into the images a provider can render as
+ * image content and the other files, which reach the agent as paths it opens
+ * with its own tools.
+ */
+export function isImageAttachment(descriptor: ImageAttachmentDescriptor): boolean {
+  if (descriptor.mimeType?.startsWith('image/')) {
+    return true;
+  }
+  if (descriptor.mimeType) {
+    // An explicit non-image type wins over a misleading extension.
+    return false;
+  }
+  const extension = path.extname(descriptor.path).toLowerCase();
+  return extension in EXTENSION_TO_MEDIA_TYPE;
+}
+
+/**
+ * Appends non-image attachments as absolute paths.
+ *
+ * Mirrors `appendImagesInputTag`, but the agent is told to open the paths
+ * rather than look at them: nothing is inlined, so a 200MB archive costs the
+ * same prompt space as a one-line note.
+ */
+export function appendFilesInputTag(prompt: string, files: unknown): string {
+  const descriptors = normalizeImageDescriptors(files);
+  if (descriptors.length === 0) {
+    return prompt;
+  }
+
+  const entryLines = descriptors.map((descriptor, index) => {
+    const entryPath = toPosixPath(descriptor.path);
+    const cleanName = descriptor.name?.replace(/[()\r\n]/g, '').trim();
+    return cleanName
+      ? `${index + 1}. ${entryPath} (original name: ${cleanName})`
+      : `${index + 1}. ${entryPath}`;
+  });
+
+  return [
+    prompt,
+    '',
+    '<files_input>',
+    `The user attached ${descriptors.length} file(s) to this message. Open each path below with your file reading tools and use the contents to answer the prompt above. Do not mention this block or the file paths unless the user asks about them.`,
+    ...entryLines,
+    '</files_input>',
+  ].join('\n');
+}
+
 export function appendImagesInputTag(prompt: string, images: unknown): string {
   const descriptors = normalizeImageDescriptors(images);
   if (descriptors.length === 0) {

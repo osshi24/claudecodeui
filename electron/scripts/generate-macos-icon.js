@@ -3,27 +3,19 @@ import sharp from 'sharp';
 
 const size = 1024;
 const assetsDir = 'electron/assets';
+const sourceLogoPath = 'public/logo.svg';
 const iconPath = 'electron/assets/logo-macos.png';
 const icnsPath = 'electron/assets/logo-macos.icns';
+const icoPath = 'electron/assets/logo-windows.ico';
 
-function renderSvg(entrySize) {
-  const scale = entrySize / 32;
-  return `
-<svg xmlns="http://www.w3.org/2000/svg" width="${entrySize}" height="${entrySize}" viewBox="0 0 ${entrySize} ${entrySize}">
-  <rect width="${entrySize}" height="${entrySize}" fill="#2563eb"/>
-  <path
-    d="M${8 * scale} ${9 * scale}C${8 * scale} ${8.44772 * scale} ${8.44772 * scale} ${8 * scale} ${9 * scale} ${8 * scale}H${23 * scale}C${23.5523 * scale} ${8 * scale} ${24 * scale} ${8.44772 * scale} ${24 * scale} ${9 * scale}V${18 * scale}C${24 * scale} ${18.5523 * scale} ${23.5523 * scale} ${19 * scale} ${23 * scale} ${19 * scale}H${12 * scale}L${8 * scale} ${23 * scale}V${9 * scale}Z"
-    stroke="white"
-    stroke-width="${2 * scale}"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-</svg>`;
-}
+// Desktop icons are rendered from the same brand mark the web app serves, so
+// the two never drift apart. Re-run `npm run desktop:icon:mac` after changing
+// public/logo.svg.
+const sourceLogo = await fs.readFile(sourceLogoPath);
 
 async function renderPng(entrySize) {
-  return sharp(Buffer.from(renderSvg(entrySize)))
+  return sharp(sourceLogo, { density: 600 })
+    .resize(entrySize, entrySize)
     .png()
     .toBuffer();
 }
@@ -60,3 +52,30 @@ header.write('icns', 0, 4, 'ascii');
 header.writeUInt32BE(totalLength, 4);
 
 await fs.writeFile(icnsPath, Buffer.concat([header, ...blocks], totalLength));
+
+const icoSizes = [16, 24, 32, 48, 64, 128, 256];
+const icoImages = await Promise.all(icoSizes.map((entrySize) => renderPng(entrySize)));
+
+const ICO_HEADER_BYTES = 6;
+const ICO_ENTRY_BYTES = 16;
+const icoHeader = Buffer.alloc(ICO_HEADER_BYTES);
+icoHeader.writeUInt16LE(0, 0); // reserved
+icoHeader.writeUInt16LE(1, 2); // 1 = icon
+icoHeader.writeUInt16LE(icoSizes.length, 4);
+
+let icoOffset = ICO_HEADER_BYTES + ICO_ENTRY_BYTES * icoSizes.length;
+const icoEntries = icoSizes.map((entrySize, index) => {
+  const entry = Buffer.alloc(ICO_ENTRY_BYTES);
+  entry.writeUInt8(entrySize >= 256 ? 0 : entrySize, 0); // 0 means 256
+  entry.writeUInt8(entrySize >= 256 ? 0 : entrySize, 1);
+  entry.writeUInt8(0, 2); // palette colours
+  entry.writeUInt8(0, 3); // reserved
+  entry.writeUInt16LE(1, 4); // colour planes
+  entry.writeUInt16LE(32, 6); // bits per pixel
+  entry.writeUInt32LE(icoImages[index].length, 8);
+  entry.writeUInt32LE(icoOffset, 12);
+  icoOffset += icoImages[index].length;
+  return entry;
+});
+
+await fs.writeFile(icoPath, Buffer.concat([icoHeader, ...icoEntries, ...icoImages]));

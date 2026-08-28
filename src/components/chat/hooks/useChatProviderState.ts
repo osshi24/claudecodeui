@@ -17,7 +17,7 @@ import {
 } from '../constants/providerEffort';
 
 const FALLBACK_DEFAULT_MODEL: Record<LLMProvider, string> = {
-  claude: 'default',
+  claude: 'fable',
   cursor: 'gpt-5.3-codex',
   codex: 'gpt-5.4',
   opencode: 'anthropic/claude-sonnet-4-5',
@@ -25,12 +25,13 @@ const FALLBACK_DEFAULT_MODEL: Record<LLMProvider, string> = {
 
 const PROVIDERS: LLMProvider[] = ['claude', 'cursor', 'codex', 'opencode'];
 
-const readStoredProvider = (): LLMProvider => {
-  const storedProvider = localStorage.getItem('selected-provider');
-  return PROVIDERS.includes(storedProvider as LLMProvider)
-    ? storedProvider as LLMProvider
-    : 'claude';
-};
+// The provider picker is hidden, so new work always starts on Claude. The
+// stored value is deliberately ignored: opening an old Codex session writes
+// 'codex' back to localStorage, and reading it here would make that leak into
+// the next new chat.
+const LOCKED_PROVIDER: LLMProvider = 'claude';
+
+const readStoredProvider = (): LLMProvider => LOCKED_PROVIDER;
 
 /**
  * Fallback permission-mode matrix used only until the backend capability
@@ -94,9 +95,7 @@ export function useChatProviderState({ selectedSession, selectedProject: _select
   const [cursorModel, setCursorModel] = useState<string>(() => {
     return localStorage.getItem('cursor-model') || FALLBACK_DEFAULT_MODEL.cursor;
   });
-  const [claudeModel, setClaudeModel] = useState<string>(() => {
-    return localStorage.getItem('claude-model') || FALLBACK_DEFAULT_MODEL.claude;
-  });
+  const [claudeModel, setClaudeModel] = useState<string>(FALLBACK_DEFAULT_MODEL.claude);
   const [codexModel, setCodexModel] = useState<string>(() => {
     return localStorage.getItem('codex-model') || FALLBACK_DEFAULT_MODEL.codex;
   });
@@ -357,16 +356,11 @@ export function useChatProviderState({ selectedSession, selectedProject: _select
     opencode: opencodeModel,
   }), [claudeModel, cursorModel, codexModel, opencodeModel]);
 
+  // Server-owned: CLAUDE_DEFAULT_MODEL decides this, not the browser.
   useEffect(() => {
     const claude = providerModelCatalog.claude;
-    if (claude) {
-      const next = pickStoredOrCurrent('claude-model', claudeModel, claude);
-      if (next !== claudeModel) {
-        setClaudeModel(next);
-      }
-      if (localStorage.getItem('claude-model') !== next) {
-        localStorage.setItem('claude-model', next);
-      }
+    if (claude?.DEFAULT && claude.DEFAULT !== claudeModel) {
+      setClaudeModel(claude.DEFAULT);
     }
   }, [providerModelCatalog.claude, claudeModel]);
 
@@ -447,7 +441,15 @@ export function useChatProviderState({ selectedSession, selectedProject: _select
   }, [selectedSession?.id, provider, getDefaultPermissionModeForProvider, getPermissionModesForProvider]);
 
   useEffect(() => {
-    if (!selectedSession?.__provider || selectedSession.__provider === provider) {
+    if (!selectedSession?.__provider) {
+      // Back on a blank chat: forget whichever provider the last session used.
+      if (provider !== LOCKED_PROVIDER) {
+        setProvider(LOCKED_PROVIDER);
+      }
+      return;
+    }
+
+    if (selectedSession.__provider === provider) {
       return;
     }
 

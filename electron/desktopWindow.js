@@ -469,9 +469,9 @@ export class DesktopWindowManager {
           },
           { type: 'separator' },
           {
-            label: 'Open Local CloudCLI',
+            label: 'Open Local MangoAds',
             accelerator: 'CmdOrCtrl+L',
-            click: () => void this.actions.openLocalInDesktop().catch((error) => this.actions.showError('Could not open local CloudCLI', error)),
+            click: () => void this.actions.openLocalInDesktop().catch((error) => this.actions.showError('Could not open local MangoAds', error)),
           },
           {
             label: 'Open Local Web UI in Browser',
@@ -510,7 +510,7 @@ export class DesktopWindowManager {
           },
           {
             label: 'Refresh Cloud Environments',
-            click: () => void this.actions.refreshCloudEnvironments().catch((error) => this.actions.showError('Could not load CloudCLI environments', error)),
+            click: () => void this.actions.refreshCloudEnvironments().catch((error) => this.actions.showError('Could not load MangoAds environments', error)),
             enabled: Boolean(cloudState.account?.apiKey),
           },
           {
@@ -604,8 +604,8 @@ export class DesktopWindowManager {
         label: 'Local',
         submenu: [
           {
-            label: localState.localServerRunning ? 'Open Local in CloudCLI' : 'Start Local in CloudCLI',
-            click: () => void this.actions.openLocalInDesktop().catch((error) => this.actions.showError('Could not open local CloudCLI', error)),
+            label: localState.localServerRunning ? 'Open Local in MangoAds' : 'Start Local in MangoAds',
+            click: () => void this.actions.openLocalInDesktop().catch((error) => this.actions.showError('Could not open local MangoAds', error)),
           },
           {
             label: 'Open Local in Browser',

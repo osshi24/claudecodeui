@@ -94,16 +94,16 @@ export default function SetupForm({ onBackToLogin }: SetupFormProps) {
 
   return (
     <AuthScreenLayout
-      title={isAdditionalAccount ? 'Create Another Account' : 'Welcome to CloudCLI'}
+      title={isAdditionalAccount ? 'Create Another Account' : 'Welcome to MangoAds'}
       description={
         isAdditionalAccount
-          ? 'Add another account to this CloudCLI instance'
+          ? 'Add another account to this MangoAds instance'
           : 'Set up your account to get started'
       }
       footerText={
         isAdditionalAccount
           ? 'All accounts share the same projects and sessions.'
-          : 'Set up the first account for this CloudCLI instance.'
+          : 'Set up the first account for this MangoAds instance.'
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">

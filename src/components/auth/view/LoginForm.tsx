@@ -64,7 +64,7 @@ export default function LoginForm({ onCreateAccount }: LoginFormProps) {
     <AuthScreenLayout
       title={t('login.title')}
       description={t('login.description')}
-      footerText="Enter your credentials to access CloudCLI"
+      footerText="Enter your credentials to access MangoAds"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthInputField

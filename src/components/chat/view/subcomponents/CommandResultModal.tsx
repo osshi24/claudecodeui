@@ -65,7 +65,6 @@ const PROVIDER_LABELS: Record<string, string> = {
 };
 
 const FALLBACK_COMMANDS: CommandEntry[] = [
-  { name: '/models', description: 'Browse available models for the active provider.' },
   { name: '/cost', description: 'Review token usage for the active session.' },
   { name: '/status', description: 'Inspect runtime, version, provider, and environment status.' },
   { name: '/memory', description: 'Open the project CLAUDE.md memory file.' },

@@ -166,12 +166,6 @@ const builtInCommands = [
     metadata: { type: "builtin" },
   },
   {
-    name: "/models",
-    description: "View available models for the current provider",
-    namespace: "builtin",
-    metadata: { type: "builtin" },
-  },
-  {
     name: "/cost",
     description: "Display token usage information",
     namespace: "builtin",
@@ -248,8 +242,6 @@ Custom commands can be created in:
       },
     };
   },
-
-  "/models": executeModelsCommand,
 
   "/cost": async (args, context) => {
     const tokenUsage = context?.tokenUsage || {};

@@ -7,7 +7,6 @@ import multer from 'multer';
 import {
   buildStoredImageRecords,
   ensureImageAssetsDir,
-  isAllowedImageMimeType,
   resolveImageAssetFile,
 } from '@/modules/assets/services/image-assets.service.js';
 
@@ -28,18 +27,17 @@ const storage = multer.diskStorage({
   },
 });
 
+/**
+ * Chat attachments accept any file type: images are handed to the provider as
+ * image content, everything else reaches the agent as a path it can open. No
+ * size cap — these are local uploads on the user's own machine.
+ */
+const MAX_ATTACHMENTS_PER_MESSAGE = 20;
+
 const upload = multer({
   storage,
-  fileFilter: (req, file, cb) => {
-    if (isAllowedImageMimeType(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, WebP, and SVG are allowed.'));
-    }
-  },
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-    files: 5,
+    files: MAX_ATTACHMENTS_PER_MESSAGE,
   },
 });
 
@@ -48,7 +46,7 @@ const upload = multer({
  * returns their absolute paths for use in provider prompts and chat history.
  */
 router.post('/images', (req, res) => {
-  upload.array('images', 5)(req, res, (err: unknown) => {
+  upload.array('images', MAX_ATTACHMENTS_PER_MESSAGE)(req, res, (err: unknown) => {
     if (err) {
       const message = err instanceof Error ? err.message : 'Upload failed';
       return res.status(400).json({ error: message });
@@ -56,12 +54,24 @@ router.post('/images', (req, res) => {
 
     const files = Array.isArray(req.files) ? req.files : [];
     if (files.length === 0) {
-      return res.status(400).json({ error: 'No image files provided' });
+      return res.status(400).json({ error: 'No files provided' });
     }
 
     res.json({ images: buildStoredImageRecords(files) });
   });
 });
+
+/**
+ * Raster image types that are safe to render inline. Anything else stored in
+ * the assets folder — SVG (scriptable), HTML, PDF, archives — is forced to
+ * download so an upload can never execute in the app's origin.
+ */
+const INLINE_SAFE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+]);
 
 /**
  * Serves one stored image asset by filename. Only files directly inside the
@@ -87,7 +97,7 @@ router.get('/images/:filename', async (req, res) => {
   // fetches assets as blobs and shows them through <img>, where SVG scripts
   // never execute.
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  if (contentType === 'image/svg+xml') {
+  if (!INLINE_SAFE_MIME_TYPES.has(contentType)) {
     res.setHeader('Content-Disposition', 'attachment');
   }
   const fileStream = fsSync.createReadStream(resolved);

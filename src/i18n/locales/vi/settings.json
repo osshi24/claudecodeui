@@ -472,7 +472,7 @@
     },
     "managed": {
       "badge": "Được quản lý",
-      "hint": "Do CloudCLI quản lý."
+      "hint": "Do MangoAds quản lý."
     },
     "help": {
       "title": "Về Codex MCP",
@@ -504,7 +504,7 @@
     "docs": "Tài liệu",
     "sections": {
       "officialTitle": "Plugin chính thức",
-      "officialDescription": "Do đội ngũ CloudCLI duy trì và sẵn sàng cài trực tiếp.",
+      "officialDescription": "Do đội ngũ MangoAds duy trì và sẵn sàng cài trực tiếp.",
       "unofficialTitle": "Plugin khác",
       "unofficialDescription": "Plugin và tích hợp không chính thức từ người dùng khác. Hãy xem mã nguồn trước khi cài."
     },
@@ -535,7 +535,7 @@
     "prismCloudCLI": {
       "name": "PRISM CloudCLI",
       "badge": "không chính thức",
-      "description": "Phân tích phiên cho Claude Code, ngay trong CloudCLI. Xem vì sao phiên của bạn tốn nhiều token mà không cần rời trình duyệt.",
+      "description": "Phân tích phiên cho Claude Code, ngay trong MangoAds. Xem vì sao phiên của bạn tốn nhiều token mà không cần rời trình duyệt.",
       "install": "Cài đặt"
     },
     "sessionManagerPlugin": {
