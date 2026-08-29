@@ -70,6 +70,23 @@ const readClaudePluginName = async (
   }
 };
 
+const BUNDLED_SKILLS: ReadonlyArray<{ name: string; description: string }> = [
+  {
+    name: 'design',
+    description:
+      'Create a design canvas — a multi-artboard visual design you can refine by hand: UI mockups and screen flows, landing pages, marketing graphics, and print pieces.',
+  },
+  {
+    name: 'dataviz',
+    description:
+      'Design-system-agnostic method for charts, dashboards and data visualization — form heuristic, colour formula with runnable validator, mark specs and interaction rules.',
+  },
+  {
+    name: 'artifact-design',
+    description: 'Design guidance and fundamentals for Artifacts.',
+  },
+];
+
 export class ClaudeSkillsProvider extends SkillsProvider {
   constructor() {
     super('claude');
@@ -79,7 +96,31 @@ export class ClaudeSkillsProvider extends SkillsProvider {
     return [
       ...(await super.listSkills(options)),
       ...(await this.listPluginSkills(getClaudeHomePath())),
+      ...this.listBundledSkills(),
     ];
+  }
+
+  /**
+   * Skills compiled into the Claude Code binary.
+   *
+   * Every other source here is a directory scan, and these have no directory:
+   * the CLI extracts one to a temp folder only when it is first invoked, so
+   * nothing on disk lists them ahead of time. Without this they never reach the
+   * slash menu even though the agent resolves them fine.
+   *
+   * The list is therefore manual — add an entry when a bundled skill is worth
+   * offering. Anything listed here is overridden by a same-named skill on disk,
+   * because callers dedupe by command and disk sources come first.
+   */
+  private listBundledSkills(): ProviderSkill[] {
+    return BUNDLED_SKILLS.map((skill) => ({
+      provider: 'claude' as const,
+      name: skill.name,
+      description: skill.description,
+      command: `/${skill.name}`,
+      scope: 'system' as const,
+      sourcePath: '',
+    }));
   }
 
   protected async getSkillSources(workspacePath: string): Promise<ProviderSkillSource[]> {

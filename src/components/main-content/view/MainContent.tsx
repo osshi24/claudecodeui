@@ -12,7 +12,7 @@ import { usePaletteOpsRegister } from '../../../contexts/PaletteOpsContext';
 import { useTasksSettings } from '../../../contexts/TasksSettingsContext';
 import { useUiPreferences } from '../../../hooks/useUiPreferences';
 import { useFileOpenResolver } from '../../../hooks/useFileOpenResolver';
-import { authenticatedFetch } from '../../../utils/api';
+import { api, authenticatedFetch } from '../../../utils/api';
 import { useEditorSidebar } from '../../code-editor/hooks/useEditorSidebar';
 import EditorSidebar from '../../code-editor/view/EditorSidebar';
 import type { Project } from '../../../types/app';
@@ -31,6 +31,33 @@ type TasksSettingsContextValue = {
   tasksEnabled: boolean;
   isTaskMasterInstalled: boolean | null;
   isTaskMasterReady: boolean | null;
+};
+
+type ProjectFileNode = {
+  type: 'file' | 'directory';
+  name: string;
+  path: string;
+  children?: ProjectFileNode[];
+};
+
+const findProjectHtml = (nodes: ProjectFileNode[]): string | null => {
+  const rootIndex = nodes.find((item) => (
+    item.type === 'file' && item.name.toLowerCase() === 'index.html'
+  ));
+  if (rootIndex) return rootIndex.path;
+
+  const htmlFiles: ProjectFileNode[] = [];
+  const visit = (items: ProjectFileNode[]) => {
+    for (const item of items) {
+      if (item.type === 'directory') visit(item.children || []);
+      else if (/\.html?$/i.test(item.name)) htmlFiles.push(item);
+    }
+  };
+  visit(nodes);
+  if (htmlFiles.length === 0) return null;
+
+  const anyIndex = htmlFiles.find((file) => file.name.toLowerCase() === 'index.html');
+  return (anyIndex || htmlFiles[0]).path;
 };
 
 function MainContent({
@@ -77,6 +104,37 @@ function MainContent({
     selectedProject,
     isMobile,
   });
+
+  useEffect(() => {
+    const projectId = selectedProject?.projectId;
+    if (!projectId) return;
+
+    let cancelled = false;
+    void api.getFiles(projectId).then(async (response) => {
+      if (!response.ok || cancelled) return;
+      const tree = await response.json() as ProjectFileNode[];
+      const htmlPath = findProjectHtml(Array.isArray(tree) ? tree : []);
+      if (!cancelled && htmlPath) {
+        try {
+          const canvasResponse = await api.wrapHtmlAsCanvas(projectId, htmlPath);
+          if (canvasResponse.ok) {
+            const payload = await canvasResponse.json();
+            if (!cancelled && payload?.canvasPath) {
+              handleFileOpen(payload.canvasPath, { visualRefreshKey: Date.now() });
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Could not seed project design canvas:', error);
+        }
+        if (!cancelled) handleFileOpen(htmlPath, { visualRefreshKey: Date.now() });
+      }
+    }).catch((error) => {
+      console.error('Could not auto-open project HTML:', error);
+    });
+
+    return () => { cancelled = true; };
+  }, [handleFileOpen, selectedProject?.projectId]);
 
   // Resolves bare/partial file references (e.g. links inside chat messages) to
   // real project files before opening them in the in-app editor.

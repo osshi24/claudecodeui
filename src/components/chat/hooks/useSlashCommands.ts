@@ -179,21 +179,6 @@ export function useSlashCommands({
 
       try {
         const workspacePath = selectedProject.fullPath || selectedProject.path || '';
-        const response = await authenticatedFetch('/api/commands/list', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            projectPath: workspacePath || selectedProject.path,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch commands');
-        }
-
-        const data = await response.json();
         const skillsParams = new URLSearchParams();
         if (workspacePath) {
           skillsParams.set('workspacePath', workspacePath);
@@ -205,19 +190,11 @@ export function useSlashCommands({
         const skillsData = skillsResponse.ok
           ? ((await skillsResponse.json()) as ProviderSkillsResponse)
           : null;
-        const skillCommands = dedupeProviderSkills(skillsData?.data?.skills || [])
+        // The menu lists skills only. Built-in and `.claude/commands` entries
+        // are deliberately left out — they are still typed and handled, just
+        // not offered here.
+        const allCommands: SlashCommand[] = dedupeProviderSkills(skillsData?.data?.skills || [])
           .map(mapSkillToSlashCommand);
-        const allCommands: SlashCommand[] = [
-          ...((data.builtIn || []) as SlashCommand[]).map((command) => ({
-            ...command,
-            type: 'built-in',
-          })),
-          ...skillCommands,
-          ...((data.custom || []) as SlashCommand[]).map((command) => ({
-            ...command,
-            type: 'custom',
-          })),
-        ];
 
         const parsedHistory = readCommandHistory(selectedProject.projectId);
         const sortedCommands = [...allCommands].sort((commandA, commandB) => {

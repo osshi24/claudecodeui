@@ -8,6 +8,7 @@ import type { MarkSessionIdle, MarkSessionProcessing } from '../../../hooks/useS
 import type { PendingPermissionRequest } from '../types/types';
 import type { ProjectSession, LLMProvider } from '../../../types/app';
 import type { SessionStore, NormalizedMessage } from '../../../stores/useSessionStore';
+import { findChangedHtmlPaths, findSeededCanvasPath, findWrittenHtmlPath } from '../../code-editor/utils/designCanvas';
 
 const isActionablePermissionRequest = (request: { toolName?: unknown } | null | undefined): boolean => {
   return request?.toolName !== 'ExitPlanMode' && request?.toolName !== 'exit_plan_mode';
@@ -39,6 +40,10 @@ interface UseChatRealtimeHandlersArgs {
   onSessionProcessing?: MarkSessionProcessing;
   onSessionIdle?: MarkSessionIdle;
   onWebSocketReconnect?: () => void;
+  /** Called with the path of a design canvas the agent just seeded. */
+  onCanvasSeeded?: (canvasPath: string) => void;
+  /** Called with the path of an HTML page the agent just wrote. */
+  onHtmlWritten?: (htmlPath: string) => void;
   sessionStore: SessionStore;
 }
 
@@ -70,12 +75,16 @@ export function useChatRealtimeHandlers({
   onSessionProcessing,
   onSessionIdle,
   onWebSocketReconnect,
+  onCanvasSeeded,
+  onHtmlWritten,
   sessionStore,
 }: UseChatRealtimeHandlersArgs) {
   // Session switches can send `chat.subscribe` before this effect has a chance
   // to rebind the websocket listener. Read the visible session id from a ref
   // so a fast `chat_subscribed` ack is matched against the current view, not
   // the previous render's closed-over selection.
+  // toolId -> path, filled when a write starts and read when it succeeds.
+  const pendingHtmlWritesRef = useRef<Map<string, string>>(new Map());
   const activeViewSessionIdRef = useRef<string | null>(selectedSession?.id || currentSessionId || null);
   activeViewSessionIdRef.current = selectedSession?.id || currentSessionId || null;
 
@@ -218,6 +227,26 @@ export function useChatRealtimeHandlers({
         sessionStore.appendRealtime(sid, msg as unknown as NormalizedMessage);
       }
 
+      // A write tool announces its target up front and its success later; pair
+      // the two so the file is only opened once it actually exists.
+      if (msg.kind === 'tool_use' && typeof msg.toolId === 'string') {
+        const htmlPath = findWrittenHtmlPath(
+          typeof msg.toolName === 'string' ? msg.toolName : null,
+          msg.toolInput,
+        );
+        if (htmlPath) {
+          pendingHtmlWritesRef.current.set(msg.toolId, htmlPath);
+        }
+
+        // Codex reports applied changes as a completed FileChanges item rather
+        // than a tool_use/tool_result pair. Open each HTML target immediately.
+        if (msg.toolName === 'FileChanges' && msg.status === 'completed') {
+          for (const changedPath of findChangedHtmlPaths(msg.toolInput)) {
+            onHtmlWritten?.(changedPath);
+          }
+        }
+      }
+
       // --- UI side effects for specific kinds ---
       switch (msg.kind) {
         case 'complete': {
@@ -320,7 +349,29 @@ export function useChatRealtimeHandlers({
           break;
         }
 
-        // text, tool_use, tool_result, thinking, interactive_prompt, task_notification
+        case 'tool_result': {
+          const resultToolId = typeof msg.toolId === 'string' ? msg.toolId : null;
+          const writtenHtml = resultToolId ? pendingHtmlWritesRef.current.get(resultToolId) : undefined;
+          if (resultToolId && writtenHtml) {
+            pendingHtmlWritesRef.current.delete(resultToolId);
+            if (!msg.isError) {
+              onHtmlWritten?.(writtenHtml);
+            }
+          }
+
+          // The /design helper writes the canvas through Bash, so no file-write
+          // event announces it — its own summary line is the signal. Opening it
+          // here mirrors how a published canvas appears on its own.
+          const canvasPath = findSeededCanvasPath(
+            typeof msg.content === 'string' ? msg.content : null,
+          );
+          if (canvasPath) {
+            onCanvasSeeded?.(canvasPath);
+          }
+          break;
+        }
+
+        // text, tool_use, thinking, interactive_prompt, task_notification
         // → already routed to store above, no UI side effects needed
         default:
           break;
@@ -343,6 +394,8 @@ export function useChatRealtimeHandlers({
     onSessionProcessing,
     onSessionIdle,
     onWebSocketReconnect,
+    onCanvasSeeded,
+    onHtmlWritten,
     sessionStore,
   ]);
 }

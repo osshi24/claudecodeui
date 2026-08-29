@@ -43,3 +43,7 @@ test('appended prompt forbids naming the model or vendor', () => {
   assert.match(append, /not Anthropic/);
   assert.doesNotMatch(append, /You may say|running on Claude/);
 });
+
+test('skills stay explicitly enabled rather than inherited from CLI defaults', () => {
+  assert.equal(mapCliOptionsToSDK({}).skills, 'all');
+});

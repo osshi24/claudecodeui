@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+    a { color: #D41E13; } a:hover { color: #a81810; }
+  </style>
+</helmet>
+<div style="width: 400px; height: 260px; box-sizing: border-box; padding: {{pad}}px; background: {{bg}}; display: flex; flex-direction: column; gap: 12px; justify-content: center;">
+  <h1 style="margin: 0; font-size: 34px; letter-spacing: -0.5px; color: {{accent}}">MangoAds</h1>
+  <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5b5b5b">
+    Canvas thử nghiệm. Chọn phần tử để chỉnh trong properties panel, hoặc dùng các chip tweak phía trên artboard.
+  </p>
+  <sc-if value="{{showBadge}}" hint-placeholder-val="{{ true }}">
+    <span style="align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #fff; background: {{accent}}">
+      Bản nháp
+    </span>
+  </sc-if>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#D41E13","options":["#D41E13","#F4BE32","#1f6feb","#111111"]},"bg":{"editor":"color","default":"#ffffff"},"pad":{"editor":"range","default":32,"min":8,"max":64,"step":4,"unit":"px"},"showBadge":{"editor":"boolean","default":true}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#D41E13',
+      bg: this.props.bg ?? '#ffffff',
+      pad: this.props.pad ?? 32,
+      showBadge: this.props.showBadge ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

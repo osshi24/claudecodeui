@@ -242,6 +242,13 @@ export const api = {
     return authenticatedFetch(`/api/browse-filesystem?${params}`);
   },
 
+  // Wraps an ordinary HTML file into an editable design canvas written beside it.
+  wrapHtmlAsCanvas: (projectId, filePath) =>
+    authenticatedFetch('/api/design-canvas/wrap', {
+      method: 'POST',
+      body: JSON.stringify({ projectId, filePath }),
+    }),
+
   createFolder: (folderPath) =>
     authenticatedFetch('/api/create-folder', {
       method: 'POST',

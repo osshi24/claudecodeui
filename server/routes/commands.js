@@ -92,7 +92,7 @@ export const executeModelsCommand = async (args, context) => {
  * @param {string} namespace - Namespace for commands (e.g., 'project', 'user')
  * @returns {Promise<Array>} Array of command objects
  */
-async function scanCommandsDirectory(dir, baseDir, namespace) {
+export async function scanCommandsDirectory(dir, baseDir, namespace) {
   const commands = [];
 
   try {
@@ -112,6 +112,14 @@ async function scanCommandsDirectory(dir, baseDir, namespace) {
           namespace,
         );
         commands.push(...subCommands);
+      } else if (entry.isFile() && entry.name === "SKILL.md") {
+        // A SKILL.md is a skill definition, not a slash command. Some setups
+        // keep skill folders under commands/, where this scan would turn each
+        // one into a command named after its path ("/frontend-design/SKILL").
+        // Running such a "command" pastes the whole skill body into the chat as
+        // the user's message instead of invoking anything, so skip them here.
+        // The agent still resolves these by name from its own skill registry.
+        continue;
       } else if (entry.isFile() && entry.name.endsWith(".md")) {
         // Parse markdown file for metadata
         try {

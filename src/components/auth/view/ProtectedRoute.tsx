@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+
 import { IS_PLATFORM } from '../../../constants/config';
 import { useAuth } from '../context/AuthContext';
-import Onboarding from '../../onboarding/view/Onboarding';
+
 import AuthLoadingScreen from './AuthLoadingScreen';
 import LoginForm from './LoginForm';
 import SetupForm from './SetupForm';
@@ -17,8 +17,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     isLoading,
     needsSetup,
     allowRegistration,
-    hasCompletedOnboarding,
-    refreshOnboardingStatus,
   } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -27,10 +25,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (IS_PLATFORM) {
-    if (!hasCompletedOnboarding) {
-      return <Onboarding onComplete={refreshOnboardingStatus} />;
-    }
-
     return <>{children}</>;
   }
 
@@ -49,10 +43,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         onCreateAccount={allowRegistration ? () => setIsRegistering(true) : undefined}
       />
     );
-  }
-
-  if (!hasCompletedOnboarding) {
-    return <Onboarding onComplete={refreshOnboardingStatus} />;
   }
 
   return <>{children}</>;

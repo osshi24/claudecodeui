@@ -145,6 +145,8 @@ tasks/
 # Git worktrees
 .worktrees/
 
+.claude/
+
 # Local desktop packaging artifacts
 /.desktop-build/
 /release/
@@ -155,3 +157,9 @@ electron/*.tar.gz
 
 # GitHub board sync config (contains access token)
 .GitHubBoard/github-sync.json
+
+# Local copy of Claude Code's bundled skills, exported for reference.
+# Anthropic ships these inside the CLI binary — the agent already loads them
+# from there, so committing the export would only add a stale duplicate (and
+# redistribute bundled content).
+/claude-skills/

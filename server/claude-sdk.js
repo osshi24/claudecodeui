@@ -258,6 +258,12 @@ function mapCliOptionsToSDK(options = {}) {
   // store dedupes the trailing complete message against the streamed text).
   sdkOptions.includePartialMessages = true;
 
+  // Pin skills on rather than inheriting whatever the CLI defaults to. Probing
+  // the SDK shows /dataviz, /design and /artifact-design already resolve today,
+  // so this changes nothing now — it keeps them from disappearing if a future
+  // CLI release narrows its default.
+  sdkOptions.skills = 'all';
+
   sdkOptions.settingSources = ['project', 'user', 'local'];
 
   if (sessionId) {

@@ -29,7 +29,7 @@ const PROVIDERS: LLMProvider[] = ['claude', 'cursor', 'codex', 'opencode'];
 // stored value is deliberately ignored: opening an old Codex session writes
 // 'codex' back to localStorage, and reading it here would make that leak into
 // the next new chat.
-const LOCKED_PROVIDER: LLMProvider = 'claude';
+const LOCKED_PROVIDER: LLMProvider = 'codex';
 
 const readStoredProvider = (): LLMProvider => LOCKED_PROVIDER;
 
