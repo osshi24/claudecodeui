@@ -216,10 +216,30 @@ const INTERNAL_CONTENT_PREFIXES = [
   '<system-reminder>',
   'Caveat:',
   '[Request interrupted',
+  // A Skill invocation appends the whole SKILL.md body as a synthetic "user"
+  // turn. On disk it carries `isMeta`, but the live SDK stream does not, so
+  // without this prefix the skill body renders as a user bubble while it
+  // streams and then vanishes once the transcript is reloaded.
+  'Base directory for this skill:',
 ] as const;
 
 function isInternalContent(content: string): boolean {
   return INTERNAL_CONTENT_PREFIXES.some((prefix) => content.startsWith(prefix));
+}
+
+/**
+ * "user" rows the harness injected rather than the human typing them: skill
+ * bodies, tool-sourced context, and other meta turns.
+ *
+ * The JSONL transcript flags them with `isMeta` and names the originating tool
+ * in `sourceToolUseID`; the live SDK stream carries neither and uses
+ * `isSynthetic` instead. Checking all three keeps streaming and reloaded
+ * history showing the same conversation.
+ */
+function isSyntheticUserRow(raw: AnyRecord): boolean {
+  return raw.isMeta === true
+    || raw.isSynthetic === true
+    || typeof raw.sourceToolUseID === 'string';
 }
 
 /**
@@ -311,7 +331,7 @@ export class ClaudeSessionsProvider implements IProviderSessions {
     const ts = raw.timestamp || new Date().toISOString();
     const baseId = raw.uuid || generateMessageId('claude');
 
-    if (raw.message?.role === 'user' && raw.message?.content && raw.isMeta !== true) {
+    if (raw.message?.role === 'user' && raw.message?.content && !isSyntheticUserRow(raw)) {
       if (Array.isArray(raw.message.content)) {
         // Image attachments sent through the SDK are persisted as base64
         // `image` blocks next to the prompt text. Collect them so the UI can

@@ -44,6 +44,51 @@ export function isDesignCanvas(content: string | null | undefined): boolean {
  */
 const SHIM = `<script id="${SHIM_ID}">
 (function () {
+  // The sandbox withholds 'allow-same-origin' so canvas content can never read
+  // the app's origin or its stored auth token. The cost is that every storage
+  // access THROWS, and the editor keeps UI state there — reading
+  // "dc-editor-props-open-v2" is what opens the properties panel, and the throw
+  // aborts that handler, so the panel silently never appears.
+  // Hand it a working in-memory Storage instead of loosening the sandbox.
+  function installMemoryStorage(name) {
+    var data = Object.create(null);
+    var api = {
+      getItem: function (key) {
+        return Object.prototype.hasOwnProperty.call(data, String(key)) ? data[String(key)] : null;
+      },
+      setItem: function (key, value) { data[String(key)] = String(value); },
+      removeItem: function (key) { delete data[String(key)]; },
+      clear: function () { data = Object.create(null); },
+      key: function (index) { var keys = Object.keys(data); return index in keys ? keys[index] : null; },
+    };
+    Object.defineProperty(api, 'length', { get: function () { return Object.keys(data).length; } });
+    try {
+      Object.defineProperty(window, name, { value: api, configurable: true, writable: false });
+    } catch (error) {
+      // Nothing else to try; the editor degrades but still renders.
+    }
+  }
+
+  ['localStorage', 'sessionStorage'].forEach(function (name) {
+    try {
+      window[name].getItem('mangoads-storage-probe');
+    } catch (error) {
+      installMemoryStorage(name);
+    }
+  });
+
+  try {
+    // The editor persists whether its properties panel is open, defaulting to
+    // closed. Storage above is per-boot memory, so that default would win every
+    // single time and the canvas would always open with the editing tools
+    // hidden behind a chevron. Seed it open; the user can still collapse it.
+    if (localStorage.getItem('dc-editor-props-open-v2') === null) {
+      localStorage.setItem('dc-editor-props-open-v2', 'true');
+    }
+  } catch (error) {
+    // Panel state is a convenience; the editor still works without it.
+  }
+
   try {
     // A previous read-only boot leaves a flag that would keep the toolbar hidden.
     for (var i = sessionStorage.length - 1; i >= 0; i--) {
@@ -51,7 +96,7 @@ const SHIM = `<script id="${SHIM_ID}">
       if (key && key.indexOf('appifact-ro/') === 0) sessionStorage.removeItem(key);
     }
   } catch (error) {
-    // Opaque origins may deny storage entirely; the editor copes without it.
+    // Storage is optional for this cleanup; the shim above already covers it.
   }
 
   window.claude = window.claude || {};
@@ -200,6 +245,19 @@ export function findSeededCanvasPath(toolOutput: string | null | undefined): str
   }
 
   return seededPath;
+}
+
+/**
+ * Whether an HTML file still needs wrapping before the canvas editor can open it.
+ *
+ * Two suffixes are already canvas-side artefacts and must be left alone:
+ * `.canvas.html` is a seeded canvas, and `.dc.html` is a single artboard whose
+ * body is already an `<x-dc>` root. Wrapping either one nests an `<x-dc>` inside
+ * an `<x-dc>`, and the editor then treats every string in the page as living in
+ * a nested component — refusing to edit text in place.
+ */
+export function isWrappableHtml(path: string): boolean {
+  return /\.html?$/i.test(path) && !/\.(canvas|dc)\.html?$/i.test(path);
 }
 
 /** Tool names whose successful result means an HTML file now exists on disk. */

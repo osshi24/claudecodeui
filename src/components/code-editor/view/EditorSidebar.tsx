@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import type { MouseEvent, MutableRefObject } from 'react';
+import type { MutableRefObject, PointerEvent } from 'react';
 import type { CodeEditorFile } from '../types/types';
 import CodeEditor from './CodeEditor';
 
@@ -10,7 +10,8 @@ type EditorSidebarProps = {
   editorWidth: number;
   hasManualWidth: boolean;
   resizeHandleRef: MutableRefObject<HTMLDivElement | null>;
-  onResizeStart: (event: MouseEvent<HTMLDivElement>) => void;
+  onResizeStart: (event: PointerEvent<HTMLDivElement>) => void;
+  onResizeEnd: () => void;
   onCloseEditor: () => void;
   onToggleEditorExpand: () => void;
   projectPath?: string;
@@ -30,6 +31,7 @@ export default function EditorSidebar({
   hasManualWidth,
   resizeHandleRef,
   onResizeStart,
+  onResizeEnd,
   onCloseEditor,
   onToggleEditorExpand,
   projectPath,
@@ -106,7 +108,8 @@ export default function EditorSidebar({
       {!editorExpanded && (
         <div
           ref={resizeHandleRef}
-          onMouseDown={onResizeStart}
+          onPointerDown={onResizeStart}
+          onLostPointerCapture={onResizeEnd}
           className="group relative w-1 flex-shrink-0 cursor-col-resize bg-gray-200 transition-colors hover:bg-blue-500 dark:bg-gray-700 dark:hover:bg-blue-600"
           title="Drag to resize"
         >

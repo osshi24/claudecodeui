@@ -47,3 +47,13 @@ test('appended prompt forbids naming the model or vendor', () => {
 test('skills stay explicitly enabled rather than inherited from CLI defaults', () => {
   assert.equal(mapCliOptionsToSDK({}).skills, 'all');
 });
+
+test('appended prompt forces the design skill for visual work', () => {
+  const { append } = mapCliOptionsToSDK({}).systemPrompt;
+
+  // The rule has to name the skill, or the model falls back to whichever
+  // frontend skill happens to match the request wording.
+  assert.match(append, /use the `design` skill/);
+  // ...and it has to win over the other design-shaped skills on disk.
+  assert.match(append, /takes precedence over every other[\s\S]*?frontend skill/);
+});

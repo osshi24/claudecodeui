@@ -12,7 +12,6 @@ import { useChatSessionState } from '../hooks/useChatSessionState';
 import { useChatRealtimeHandlers } from '../hooks/useChatRealtimeHandlers';
 import { useChatComposerState } from '../hooks/useChatComposerState';
 import { useSessionStore } from '../../../stores/useSessionStore';
-import { api } from '../../../utils/api';
 
 import ChatMessagesPane from './subcomponents/ChatMessagesPane';
 import ChatComposer from './subcomponents/ChatComposer';
@@ -238,28 +237,12 @@ function ChatInterface({
     });
   }, [selectedProject, selectedSession, sendMessage, sessionStore]);
 
-  /** Seed and open the full Claude Design editor; fall back to plain HTML. */
+  /** Open a page the agent just wrote; the editor upgrades it to a canvas. */
   const handleHtmlWritten = useCallback(
-    async (htmlPath: string) => {
-      if (!onFileOpen) return;
-      const projectId = selectedProject?.projectId;
-      if (projectId) {
-        try {
-          const response = await api.wrapHtmlAsCanvas(projectId, htmlPath);
-          if (response.ok) {
-            const payload = await response.json();
-            if (payload?.canvasPath) {
-              onFileOpen(payload.canvasPath, { visualRefreshKey: Date.now() });
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Could not seed full design canvas:', error);
-        }
-      }
-      onFileOpen(htmlPath, { visualRefreshKey: Date.now() });
+    (htmlPath: string) => {
+      onFileOpen?.(htmlPath, { visualRefreshKey: Date.now() });
     },
-    [onFileOpen, selectedProject?.projectId],
+    [onFileOpen],
   );
 
   useChatRealtimeHandlers({

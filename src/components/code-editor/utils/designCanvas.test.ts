@@ -6,6 +6,7 @@ import {
   findSeededCanvasPath,
   findWrittenHtmlPath,
   isDesignCanvas,
+  isWrappableHtml,
   withCanvasEditShim,
   withVisualEditorBridge,
 } from './designCanvas';
@@ -143,4 +144,54 @@ test('batched provider file changes yield only source HTML paths', () => {
 test('write-tool matching is provider-case agnostic', () => {
   assert.equal(findWrittenHtmlPath('write', { filePath: '/work/index.html' }), '/work/index.html');
   assert.equal(findWrittenHtmlPath('ApplyPatch', { path: '/work/index.html' }), null);
+});
+
+test('the canvas shim installs storage the sandbox would otherwise deny', () => {
+  // Without this the editor's read of "dc-editor-props-open-v2" throws and the
+  // properties panel never opens inside the app's sandboxed iframe.
+  const shimmed = withCanvasEditShim(seededCanvas);
+
+  assert.match(shimmed, /installMemoryStorage/);
+  assert.match(shimmed, /'localStorage', 'sessionStorage'/);
+  // The probe must run before the read-only cleanup, which itself uses storage.
+  assert.ok(
+    shimmed.indexOf('installMemoryStorage') < shimmed.indexOf("appifact-ro/"),
+    'storage must be installed before anything reads it',
+  );
+});
+
+test('the canvas opens with its properties panel already showing', () => {
+  // The editor defaults the panel to closed and remembers the choice in storage
+  // the sandbox wipes on every boot — so without a seed the editing tools are
+  // always hidden behind a chevron when a canvas opens in the app.
+  const shimmed = withCanvasEditShim(seededCanvas);
+
+  const seedAt = shimmed.indexOf("setItem('dc-editor-props-open-v2', 'true')");
+
+  assert.ok(seedAt > -1, 'the panel must be seeded open');
+  assert.ok(
+    shimmed.indexOf('installMemoryStorage') < seedAt,
+    'the seed must be written into storage that exists',
+  );
+});
+
+test('a plain page is wrapped into a canvas', () => {
+  assert.equal(isWrappableHtml('/project/index.html'), true);
+  assert.equal(isWrappableHtml('/project/pages/about.htm'), true);
+});
+
+test('a seeded canvas is never wrapped again', () => {
+  assert.equal(isWrappableHtml('/project/index.canvas.html'), false);
+});
+
+test('an artboard is never wrapped — its body is already an <x-dc> root', () => {
+  // Wrapping one nests <x-dc> inside <x-dc>, and the editor then refuses every
+  // text edit with "This text lives inside a nested component".
+  assert.equal(isWrappableHtml('/project/Main.dc.html'), false);
+  assert.equal(isWrappableHtml('/project/Mobile.dc.html'), false);
+});
+
+test('non-HTML files are left alone', () => {
+  assert.equal(isWrappableHtml('/project/canvas.json'), false);
+  assert.equal(isWrappableHtml('/project/seed-canvas.mjs'), false);
 });

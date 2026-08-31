@@ -163,3 +163,6 @@ electron/*.tar.gz
 # from there, so committing the export would only add a stale duplicate (and
 # redistribute bundled content).
 /claude-skills/
+
+# Design canvases generated beside a source page (2+ MB each)
+*.canvas.html

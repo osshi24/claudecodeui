@@ -100,6 +100,7 @@ function MainContent({
     handleCloseEditor,
     handleToggleEditorExpand,
     handleResizeStart,
+    stopResizing,
   } = useEditorSidebar({
     selectedProject,
     isMobile,
@@ -114,21 +115,8 @@ function MainContent({
       if (!response.ok || cancelled) return;
       const tree = await response.json() as ProjectFileNode[];
       const htmlPath = findProjectHtml(Array.isArray(tree) ? tree : []);
-      if (!cancelled && htmlPath) {
-        try {
-          const canvasResponse = await api.wrapHtmlAsCanvas(projectId, htmlPath);
-          if (canvasResponse.ok) {
-            const payload = await canvasResponse.json();
-            if (!cancelled && payload?.canvasPath) {
-              handleFileOpen(payload.canvasPath, { visualRefreshKey: Date.now() });
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Could not seed project design canvas:', error);
-        }
-        if (!cancelled) handleFileOpen(htmlPath, { visualRefreshKey: Date.now() });
-      }
+      // `handleFileOpen` upgrades the page to a design canvas on its own.
+      if (!cancelled && htmlPath) handleFileOpen(htmlPath, { visualRefreshKey: Date.now() });
     }).catch((error) => {
       console.error('Could not auto-open project HTML:', error);
     });
@@ -288,6 +276,7 @@ function MainContent({
           hasManualWidth={hasManualWidth}
           resizeHandleRef={resizeHandleRef}
           onResizeStart={handleResizeStart}
+          onResizeEnd={stopResizing}
           onCloseEditor={handleCloseEditor}
           onToggleEditorExpand={handleToggleEditorExpand}
           projectPath={selectedProject.path}

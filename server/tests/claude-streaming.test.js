@@ -55,3 +55,46 @@ test('block completion normalizes into stream_end', () => {
 
   assert.equal(normalized[0].kind, 'stream_end');
 });
+
+test('a streamed skill body is not rendered as a user message', () => {
+  // The CLI appends the SKILL.md body as a synthetic "user" turn. On disk it
+  // carries `isMeta`, but the live SDK stream omits it — so this row used to
+  // reach the UI as a red user bubble that vanished on reload.
+  const skillInjection = {
+    type: 'user',
+    message: {
+      role: 'user',
+      content: [{
+        type: 'text',
+        text: 'Base directory for this skill: /Users/me/.claude/commands/frontend-design\n\nThis skill guides...',
+      }],
+    },
+  };
+
+  const normalized = new ClaudeSessionsProvider().normalizeMessage(skillInjection, 'sess-1');
+
+  assert.deepEqual(normalized, []);
+});
+
+test('rows sourced from a tool use stay out of the transcript', () => {
+  const injected = {
+    type: 'user',
+    sourceToolUseID: 'toolu_01UoQPogAoHUWVTKfSqsN2yD',
+    message: { role: 'user', content: [{ type: 'text', text: 'injected context' }] },
+  };
+
+  assert.deepEqual(new ClaudeSessionsProvider().normalizeMessage(injected, 'sess-1'), []);
+});
+
+test('a real user message still normalizes into a user bubble', () => {
+  const typed = {
+    type: 'user',
+    message: { role: 'user', content: [{ type: 'text', text: 'giúp tôi tạo một landing page' }] },
+  };
+
+  const normalized = new ClaudeSessionsProvider().normalizeMessage(typed, 'sess-1');
+
+  assert.equal(normalized.length, 1);
+  assert.equal(normalized[0].role, 'user');
+  assert.equal(normalized[0].content, 'giúp tôi tạo một landing page');
+});
