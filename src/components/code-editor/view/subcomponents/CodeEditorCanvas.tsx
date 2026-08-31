@@ -18,9 +18,24 @@ export default function CodeEditorCanvas({ file, content, projectId, onClose, on
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const seededCanvas = isDesignCanvas(content);
+
+  // What we last wrote ourselves. A save flows back as a new `content`, and
+  // rebuilding the blob from it would swap the iframe's src and reload the
+  // whole document — losing the undo history, the selection, the pan/zoom
+  // position and the focused artboard on every single save. Only content that
+  // did NOT come from this editor should reload it.
+  const ownSaveRef = useRef<string | null>(null);
+  const [source, setSource] = useState(content);
+  // Declared first so it runs before the comparison below: a different file
+  // whose content happens to equal our last save must still reload.
+  useEffect(() => { ownSaveRef.current = null; }, [file.path]);
+  useEffect(() => {
+    if (content !== ownSaveRef.current) setSource(content);
+  }, [content]);
+
   const blobUrl = useMemo(() => URL.createObjectURL(new Blob([
-    seededCanvas ? withCanvasEditShim(content) : withVisualEditorBridge(content),
-  ], { type: 'text/html' })), [content, seededCanvas]);
+    seededCanvas ? withCanvasEditShim(source) : withVisualEditorBridge(source),
+  ], { type: 'text/html' })), [source, seededCanvas]);
 
   useEffect(() => () => URL.revokeObjectURL(blobUrl), [blobUrl]);
 
@@ -30,6 +45,7 @@ export default function CodeEditorCanvas({ file, content, projectId, onClose, on
     try {
       const response = await api.saveFile(projectId, file.path, page);
       if (!response.ok) throw new Error(`Save failed (${response.status})`);
+      ownSaveRef.current = page;
       onContentSaved(page);
       setSaveState('saved');
       window.setTimeout(() => setSaveState('idle'), 1800);
@@ -51,10 +67,26 @@ export default function CodeEditorCanvas({ file, content, projectId, onClose, on
   const command = useCallback((value: VisualEditorCommand) => {
     iframeRef.current?.contentWindow?.postMessage({ source: CANVAS_MESSAGE_SOURCE, type: 'command', command: value }, '*');
   }, []);
+  // Opened without the editing shim on purpose.
+  //
+  // A popped-out window is top-level, so `window.parent` is itself: the shim's
+  // save would postMessage into the void while still resolving successfully,
+  // and the editor would report a save that never reached disk. Serving the
+  // untouched page makes the window boot read-only, which is what the button
+  // already promises — a preview.
+  const previewUrlRef = useRef<string | null>(null);
   const popOut = useCallback(() => {
-    const popup = window.open(blobUrl, '_blank', 'noopener,noreferrer');
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = URL.createObjectURL(new Blob([source], { type: 'text/html' }));
+    const popup = window.open(previewUrlRef.current, '_blank', 'noopener,noreferrer');
     if (popup) popup.opener = null;
-  }, [blobUrl]);
+  }, [source]);
+
+  // Revoked on unmount rather than on the next save, so a preview window that
+  // is still open keeps working.
+  useEffect(() => () => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+  }, []);
 
   return <div className="flex h-full w-full flex-col bg-background">
     <div className="flex flex-shrink-0 flex-wrap items-center gap-1 border-b border-border/60 px-2 py-2">
@@ -76,7 +108,10 @@ export default function CodeEditorCanvas({ file, content, projectId, onClose, on
         {selectedTag && <span className="hidden rounded bg-muted px-2 py-1 font-mono text-[10px] sm:inline">{selectedTag}</span>}
         <span className="px-1 text-[11px] text-muted-foreground">{saveState === 'saving' && <Loader2 className="h-3.5 w-3.5 animate-spin" />}{saveState === 'saved' && 'Saved'}{saveState === 'error' && 'Save failed'}</span>
         {!seededCanvas && <Tool title="Save HTML" onClick={() => command({ type: 'save' })}><Save /></Tool>}
-        <Tool title="Source code" onClick={onShowCode}><Code2 /></Tool>
+        {/* A seeded canvas stays in this view whatever the mode flag says (its
+            source is a ~2.4 MB compiled payload that would stall the code
+            editor), so offering the button there would be a dead control. */}
+        {!seededCanvas && <Tool title="Source code" onClick={onShowCode}><Code2 /></Tool>}
         <Tool title="Open preview in new window" onClick={popOut}><ExternalLink /></Tool>
         {isSidebar && onToggleExpand && <Tool title={isExpanded ? 'Collapse panel' : 'Expand panel'} onClick={onToggleExpand}>{isExpanded ? <Minimize2 /> : <Maximize2 />}</Tool>}
         {isSidebar && onPopOut && <Tool title="Open editor full window" onClick={onPopOut}><ExternalLink /></Tool>}

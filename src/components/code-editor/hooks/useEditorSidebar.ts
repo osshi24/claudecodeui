@@ -63,7 +63,24 @@ export const useEditorSidebar = ({
 
       void api.wrapHtmlAsCanvas(projectId, filePath)
         .then(async (response) => {
-          if (!response.ok) return;
+          if (!response.ok) {
+            // Falling back to the plain preview is correct, but doing it in
+            // total silence is not: the page still opens and looks fine, so
+            // the missing canvas tooling reads as a broken editor rather than
+            // an unavailable payload. Name the reason the server gave.
+            const reason = await response.json().then(
+              (body: { error?: string }) => body?.error,
+              () => null,
+            );
+            console.warn(
+              `[DesignCanvas] ${filePath} opened as a plain preview: `
+              + `${reason ?? `wrap failed (${response.status})`}.`
+              + (reason === 'design_payload_unavailable'
+                ? ' The /design skill payload is not on disk — run /design once, or copy it to .claude/skills/design.'
+                : ''),
+            );
+            return;
+          }
           const { canvasPath } = await response.json() as { canvasPath?: string };
           // A newer open superseded this one; leave the editor where it is.
           if (!canvasPath || canvasPath === filePath || openTokenRef.current !== openToken) return;

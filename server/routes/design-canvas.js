@@ -68,8 +68,18 @@ async function resolveSkillDir(projectRoot) {
  * and the body becomes the artboard root. Scripts are dropped on purpose: the
  * artboard renders inside a sandboxed iframe with no network egress, so page
  * scripts would either fail or behave differently than in a browser.
+ *
+ * Linked stylesheets travel with the inline ones. Web fonts are almost always
+ * pulled in through a `<link>` in the head, and dropping those tags silently
+ * repainted every wrapped page in a fallback font — the design looked broken
+ * for a reason nothing on screen explained.
  */
 export function htmlToArtboard(html) {
+  const styleLinks = [...html.matchAll(/<link\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter((tag) => /rel\s*=\s*["']?stylesheet/i.test(tag))
+    .join('\n  ');
+
   const styles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)]
     .map((match) => match[1])
     .join('\n');
@@ -88,6 +98,7 @@ export function htmlToArtboard(html) {
 <body>
 <x-dc>
 <helmet>
+  ${styleLinks}
   <style>
 ${styles}
   </style>

@@ -39,6 +39,24 @@ export const SETTINGS_MAIN_TABS: SettingsMainTabMeta[] = [
   { id: 'about', label: 'About', keywords: 'about version info', icon: Info },
 ];
 
+/**
+ * The tabs Settings actually offers.
+ *
+ * Every other tab stays implemented and rendered by `Settings.tsx` — it is
+ * simply unreachable, because three separate places used to list the tabs and
+ * trimming them one by one is how a menu entry survives in the command palette
+ * after being removed from the sidebar. Those places now filter through this
+ * list, so restoring a tab means adding its id back here and nothing else.
+ */
+export const VISIBLE_SETTINGS_TABS: SettingsMainTab[] = ['appearance', 'git', 'notifications'];
+
+/** Where Settings lands when the caller names no tab, or names a hidden one. */
+export const DEFAULT_SETTINGS_TAB: SettingsMainTab = VISIBLE_SETTINGS_TABS[0];
+
+export const isVisibleSettingsTab = (tab: string): tab is SettingsMainTab => (
+  VISIBLE_SETTINGS_TABS.includes(tab as SettingsMainTab)
+);
+
 export const AGENT_PROVIDERS: AgentProvider[] = ['claude', 'cursor', 'codex', 'opencode'];
 export const AGENT_CATEGORIES: AgentCategory[] = ['account', 'permissions', 'mcp'];
 

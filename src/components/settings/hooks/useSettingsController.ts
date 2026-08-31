@@ -7,6 +7,8 @@ import { useProviderAuthStatus } from '../../provider-auth/hooks/useProviderAuth
 import {
   DEFAULT_CODE_EDITOR_SETTINGS,
   DEFAULT_CURSOR_PERMISSIONS,
+  DEFAULT_SETTINGS_TAB,
+  isVisibleSettingsTab,
 } from '../constants/constants';
 import type {
   AgentProvider,
@@ -53,15 +55,13 @@ type NotificationPreferencesResponse = {
 
 type ActiveLoginProvider = AgentProvider | '';
 
-const KNOWN_MAIN_TABS: SettingsMainTab[] = ['agents', 'appearance', 'git', 'api', 'tasks', 'browser', 'notifications', 'plugins', 'about'];
-
 const normalizeMainTab = (tab: string): SettingsMainTab => {
   // Keep backwards compatibility with older callers that still pass "tools".
-  if (tab === 'tools') {
-    return 'agents';
-  }
+  const requested = tab === 'tools' ? 'agents' : tab;
 
-  return KNOWN_MAIN_TABS.includes(tab as SettingsMainTab) ? (tab as SettingsMainTab) : 'agents';
+  // A hidden tab reaching this point — a stale deep link, an old caller — would
+  // open Settings on a pane with no way back to it in the menu.
+  return isVisibleSettingsTab(requested) ? requested : DEFAULT_SETTINGS_TAB;
 };
 
 const parseJson = <T>(value: string | null, fallback: T): T => {

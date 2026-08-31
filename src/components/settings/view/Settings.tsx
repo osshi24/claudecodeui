@@ -15,6 +15,7 @@ import NotificationsSettingsTab from '../view/tabs/NotificationsSettingsTab';
 import TasksSettingsTab from '../view/tabs/tasks-settings/TasksSettingsTab';
 import PluginSettingsTab from '../../plugins/view/PluginSettingsTab';
 import AboutTab from '../view/tabs/AboutTab';
+import { DEFAULT_SETTINGS_TAB } from '../constants/constants';
 import { useSettingsController } from '../hooks/useSettingsController';
 import { useWebPush } from '../../../hooks/useWebPush';
 import type { SettingsProps } from '../types/types';
@@ -27,7 +28,7 @@ type DesktopNotificationsState = {
   lastError?: string | null;
 };
 
-function Settings({ isOpen, onClose, projects = [], initialTab = 'agents' }: SettingsProps) {
+function Settings({ isOpen, onClose, projects = [], initialTab = DEFAULT_SETTINGS_TAB }: SettingsProps) {
   const { t } = useTranslation('settings');
   const desktopNotificationsBridge = useMemo(() => (
     typeof window === 'undefined'

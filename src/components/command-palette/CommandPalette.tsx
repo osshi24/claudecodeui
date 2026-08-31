@@ -28,7 +28,7 @@ import {
 } from '../../shared/view/ui';
 import { useTheme } from '../../contexts/ThemeContext';
 import { usePaletteOps } from '../../contexts/PaletteOpsContext';
-import { SETTINGS_MAIN_TABS } from '../settings/constants/constants';
+import { SETTINGS_MAIN_TABS, isVisibleSettingsTab } from '../settings/constants/constants';
 import type { AppTab, Project } from '../../types/app';
 
 import { useSessionsSource } from './sources/useSessionsSource';
@@ -261,7 +261,7 @@ export default function CommandPalette({
 
             {showActions && (
               <CommandGroup heading="Settings">
-                {SETTINGS_MAIN_TABS.map(({ id, label, keywords, icon: Icon }) => (
+                {SETTINGS_MAIN_TABS.filter(({ id }) => isVisibleSettingsTab(id)).map(({ id, label, keywords, icon: Icon }) => (
                   <CommandItem
                     key={id}
                     value={`Settings ${label} ${keywords}`}

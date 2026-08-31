@@ -2,6 +2,7 @@ import { Bell, Bot, GitBranch, Info, Key, ListChecks, Mic, MonitorPlay, Palette,
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '../../../lib/utils';
+import { isVisibleSettingsTab } from '../constants/constants';
 import { PillBar, Pill } from '../../../shared/view/ui';
 import type { SettingsMainTab } from '../types/types';
 
@@ -16,7 +17,7 @@ type NavItem = {
   icon: typeof Bot;
 };
 
-const NAV_ITEMS: NavItem[] = [
+const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'agents', labelKey: 'mainTabs.agents', icon: Bot },
   { id: 'appearance', labelKey: 'mainTabs.appearance', icon: Palette },
   { id: 'git', labelKey: 'mainTabs.git', icon: GitBranch },
@@ -28,6 +29,8 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'notifications', labelKey: 'mainTabs.notifications', icon: Bell },
   { id: 'about', labelKey: 'mainTabs.about', icon: Info },
 ];
+
+const NAV_ITEMS = ALL_NAV_ITEMS.filter((item) => isVisibleSettingsTab(item.id));
 
 export default function SettingsSidebar({ activeTab, onChange }: SettingsSidebarProps) {
   const { t } = useTranslation('settings');
