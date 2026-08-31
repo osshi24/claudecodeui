@@ -247,3 +247,69 @@ test('successive UUIDs differ', () => {
 
   assert.notEqual(make(), make());
 });
+
+/**
+ * Executes the shim's srcdoc patch against stand-ins for the DOM classes it
+ * touches, then reports what an artboard document would actually receive.
+ */
+function runSrcdocPatch(): { viaProperty: string; viaAttribute: string } {
+  const shim = withCanvasEditShim(seededCanvas);
+  // Anchored on the setAttribute patch so the match spans both routes to
+  // srcdoc, and stops before the closing brace of the enclosing `if`.
+  const block = /var UUID_MARK[\s\S]*?Element\.prototype\.setAttribute = function[\s\S]*?\n {6}\};\n/.exec(shim);
+  assert.ok(block, 'srcdoc patch missing from the shim');
+
+  let stored = '';
+  class FakeIframe {
+    setAttribute(name: string, value: string) { stored = `attr:${value}`; }
+  }
+  const proto = FakeIframe.prototype as unknown as Record<string, unknown>;
+  Object.defineProperty(proto, 'srcdoc', {
+    configurable: true, enumerable: true,
+    get: () => stored, set: (value: string) => { stored = `prop:${value}`; },
+  });
+
+  const cryptoStub = { getRandomValues: (a: Uint8Array) => a };
+  new Function('crypto', 'HTMLIFrameElement', 'Element', 'Object', 'Uint8Array', block[0])(
+    cryptoStub, FakeIframe, FakeIframe, Object, Uint8Array,
+  );
+
+  const frame = new FakeIframe() as unknown as { srcdoc: string; setAttribute: (n: string, v: string) => void };
+  frame.srcdoc = '<html><head><title>Artboard</title></head><body>x</body></html>';
+  const viaProperty = stored;
+  frame.setAttribute('srcdoc', '<html><head></head><body>y</body></html>');
+  return { viaProperty, viaAttribute: stored };
+}
+
+test('an artboard set through the srcdoc property receives the polyfill', () => {
+  const { viaProperty } = runSrcdocPatch();
+
+  assert.match(viaProperty, /mangoads-uuid-polyfill/);
+  // It has to run before the artboard's own markup, or the editor calls
+  // randomUUID first and throws exactly as it did before.
+  assert.match(viaProperty, /<head><script id="mangoads-uuid-polyfill">/);
+  assert.match(viaProperty, /<title>Artboard<\/title>/);
+});
+
+test('an artboard set through setAttribute receives it too', () => {
+  // React writes srcdoc as an attribute, so covering only the property would
+  // have fixed this by luck rather than by design.
+  assert.match(runSrcdocPatch().viaAttribute, /mangoads-uuid-polyfill/);
+});
+
+test('the injected polyfill produces a valid v4 UUID', () => {
+  const { viaProperty } = runSrcdocPatch();
+  const source = /<script id="mangoads-uuid-polyfill">([\s\S]*?)<\/script>/.exec(viaProperty);
+  assert.ok(source, 'no polyfill script found');
+
+  const cryptoStub: Record<string, unknown> = {
+    getRandomValues: (array: Uint8Array) => {
+      for (let i = 0; i < array.length; i++) array[i] = Math.floor(Math.random() * 256);
+      return array;
+    },
+  };
+  new Function('crypto', 'Uint8Array', 'Object', source[1])(cryptoStub, Uint8Array, Object);
+
+  assert.match((cryptoStub.randomUUID as () => string)(),
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+});

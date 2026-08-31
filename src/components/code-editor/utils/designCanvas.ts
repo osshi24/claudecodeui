@@ -106,6 +106,65 @@ const SHIM = `<script id="${SHIM_ID}">
     // A frozen crypto object is out of our hands; the editor degrades as before.
   }
 
+  // The editor draws every artboard inside a nested <iframe srcdoc="...">, and
+  // that document gets its own window: the polyfill installed above belongs to
+  // this document alone and never reaches it. So the artboard kept throwing
+  // "crypto.randomUUID is not a function" and sat on "Loading artboard..."
+  // forever, even though the canvas around it had a working fallback.
+  //
+  // Both routes a value can take to srcdoc are patched, because it is set as a
+  // property by some callers and through setAttribute by others (React among
+  // them) - covering one and not the other would fix it only by luck.
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID !== 'function') {
+      var UUID_MARK = 'mangoads-uuid-polyfill';
+      // Split so this literal cannot close the script tag that carries it.
+      var CLOSE_SCRIPT = '<' + '/script>';
+      var UUID_TAG = '<script id="' + UUID_MARK + '">'
+        + '(function(){if(typeof crypto==="undefined"||typeof crypto.randomUUID==="function"||!crypto.getRandomValues)return;'
+        + 'try{Object.defineProperty(crypto,"randomUUID",{configurable:true,writable:true,value:function(){'
+        + 'var b=crypto.getRandomValues(new Uint8Array(16));b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;'
+        + 'var h=[];for(var i=0;i<16;i++)h.push((b[i]+256).toString(16).slice(1));'
+        + 'return h.slice(0,4).join("")+"-"+h.slice(4,6).join("")+"-"+h.slice(6,8).join("")+"-"'
+        + '+h.slice(8,10).join("")+"-"+h.slice(10,16).join("");}});}catch(e){}})();'
+        + CLOSE_SCRIPT;
+
+      var withUuidPolyfill = function (value) {
+        if (typeof value !== 'string' || value.indexOf(UUID_MARK) >= 0) {
+          return value;
+        }
+        var head = /<head[^>]*>/i.exec(value);
+        if (head) {
+          var at = head.index + head[0].length;
+          return value.slice(0, at) + UUID_TAG + value.slice(at);
+        }
+        // No <head> of its own: the browser hoists a leading script into the
+        // one it creates, so it still runs before the rest of the document.
+        return UUID_TAG + value;
+      };
+
+      var srcdocDescriptor = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'srcdoc');
+      if (srcdocDescriptor && srcdocDescriptor.set) {
+        Object.defineProperty(HTMLIFrameElement.prototype, 'srcdoc', {
+          configurable: true,
+          enumerable: srcdocDescriptor.enumerable,
+          get: srcdocDescriptor.get,
+          set: function (value) { srcdocDescriptor.set.call(this, withUuidPolyfill(value)); },
+        });
+      }
+
+      var nativeSetAttribute = Element.prototype.setAttribute;
+      Element.prototype.setAttribute = function (name, value) {
+        if (this instanceof HTMLIFrameElement && String(name).toLowerCase() === 'srcdoc') {
+          return nativeSetAttribute.call(this, name, withUuidPolyfill(value));
+        }
+        return nativeSetAttribute.call(this, name, value);
+      };
+    }
+  } catch (error) {
+    // Patching failed; the artboard behaves as it did before this shim.
+  }
+
   try {
     // The editor persists whether its properties panel is open, defaulting to
     // closed. Storage above is per-boot memory, so that default would win every
