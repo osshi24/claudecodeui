@@ -195,3 +195,55 @@ test('non-HTML files are left alone', () => {
   assert.equal(isWrappableHtml('/project/canvas.json'), false);
   assert.equal(isWrappableHtml('/project/seed-canvas.mjs'), false);
 });
+
+/**
+ * Runs the shim's crypto polyfill the way a browser would: against a `crypto`
+ * that has `getRandomValues` but no `randomUUID` — exactly what an insecure
+ * origin (http://<lan-ip>) hands the page.
+ */
+function runCryptoPolyfill(cryptoStub: Record<string, unknown>): void {
+  const shim = withCanvasEditShim(seededCanvas);
+  // Just the `if` block, without the surrounding try/catch that would not close.
+  const body = /if \(typeof crypto[\s\S]*?\n {4}\}\n/.exec(shim);
+  assert.ok(body, 'crypto polyfill missing from the shim');
+  new Function('crypto', 'Uint8Array', 'Object', body[0])(cryptoStub, Uint8Array, Object);
+}
+
+test('an insecure origin still gets a working crypto.randomUUID', () => {
+  // http://localhost is a secure context; http://192.168.x.x is not, and the
+  // canvas editor calls randomUUID while building its first artboard.
+  const stub: Record<string, unknown> = {
+    getRandomValues: (array: Uint8Array) => {
+      for (let i = 0; i < array.length; i++) array[i] = (i * 37 + 11) & 0xff;
+      return array;
+    },
+  };
+
+  runCryptoPolyfill(stub);
+
+  const uuid = (stub.randomUUID as () => string)();
+  assert.match(uuid, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+});
+
+test('a secure origin keeps the browser implementation', () => {
+  const native = () => 'native-uuid';
+  const stub: Record<string, unknown> = { randomUUID: native, getRandomValues: (a: Uint8Array) => a };
+
+  runCryptoPolyfill(stub);
+
+  assert.equal(stub.randomUUID, native, 'the polyfill overwrote a working implementation');
+});
+
+test('successive UUIDs differ', () => {
+  const stub: Record<string, unknown> = {
+    getRandomValues: (array: Uint8Array) => {
+      for (let i = 0; i < array.length; i++) array[i] = Math.floor(Math.random() * 256);
+      return array;
+    },
+  };
+
+  runCryptoPolyfill(stub);
+  const make = stub.randomUUID as () => string;
+
+  assert.notEqual(make(), make());
+});

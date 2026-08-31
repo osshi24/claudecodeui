@@ -77,6 +77,35 @@ const SHIM = `<script id="${SHIM_ID}">
     }
   });
 
+  // crypto.randomUUID exists only in a secure context. Browsers grant that to
+  // http://localhost as a special case, but not to http://<lan-ip>, so opening
+  // the app by IP left the editor calling an undefined function while it built
+  // its first artboard - the canvas simply sat on "Loading artboard..." with no
+  // error the user could see.
+  //
+  // crypto.getRandomValues carries no such restriction, so a v4 UUID can still
+  // be produced with real randomness rather than Math.random.
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID !== 'function' && crypto.getRandomValues) {
+      Object.defineProperty(crypto, 'randomUUID', {
+        configurable: true,
+        writable: true,
+        value: function randomUUID() {
+          var bytes = crypto.getRandomValues(new Uint8Array(16));
+          bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+          bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10xx
+          var hex = [];
+          for (var i = 0; i < 16; i++) hex.push((bytes[i] + 0x100).toString(16).slice(1));
+          return hex.slice(0, 4).join('') + '-' + hex.slice(4, 6).join('') + '-'
+            + hex.slice(6, 8).join('') + '-' + hex.slice(8, 10).join('') + '-'
+            + hex.slice(10, 16).join('');
+        },
+      });
+    }
+  } catch (error) {
+    // A frozen crypto object is out of our hands; the editor degrades as before.
+  }
+
   try {
     // The editor persists whether its properties panel is open, defaulting to
     // closed. Storage above is per-boot memory, so that default would win every
